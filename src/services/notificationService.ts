@@ -1,29 +1,30 @@
+import { notificationRepository, type ListNotificationsParams } from '@/repositories/notificationRepository';
+import type { Notification, Paginated } from '@/types/domain';
+
 /**
- * `notifications` was in Batch 1's placeholder schema but was **not** part
- * of the Batch 2 table list the user specified, so it doesn't exist in the
- * real database (verified: 37 tables live, no `notifications`). This
- * service keeps the interface Batch 1's architecture calls for, as a
- * no-op, so call sites don't have to change when a real implementation
- * (a future migration, or a third-party provider like Klaviyo/OneSignal)
- * lands — swap the class body, not the callers.
+ * Provider-agnostic notification abstraction. Business logic never talks to
+ * an email provider directly — it enqueues (via the enqueue_notification
+ * SECURITY DEFINER function, called from order/payment/refund/newsletter
+ * flows server-side, see migration 0034) and this service only ever reads
+ * the resulting queue or asks it to process. Swapping how delivery actually
+ * happens (a real provider, once Edge Functions are deployable here) means
+ * changing the single simulated-provider block inside
+ * process_pending_notifications — nothing in this file or its callers.
  */
 export interface NotificationService {
-  notifyOrderConfirmation(customerId: string, orderId: string): Promise<void>;
-  notifyBackInStock(customerId: string, productId: string): Promise<void>;
+  listForAdmin(params?: ListNotificationsParams): Promise<Paginated<Notification>>;
+  /** Stands in for a scheduled worker in this environment — sends (or fails, and logs why) every eligible pending/retriable-failed notification. */
+  processQueue(limit?: number): Promise<number>;
 }
 
-class NoopNotificationService implements NotificationService {
-  async notifyOrderConfirmation(customerId: string, orderId: string): Promise<void> {
-    if (import.meta.env.DEV) {
-      console.debug('[notifications] order confirmation (no-op)', { customerId, orderId });
-    }
+class SupabaseNotificationService implements NotificationService {
+  listForAdmin(params: ListNotificationsParams = {}): Promise<Paginated<Notification>> {
+    return notificationRepository.listForAdmin(params);
   }
 
-  async notifyBackInStock(customerId: string, productId: string): Promise<void> {
-    if (import.meta.env.DEV) {
-      console.debug('[notifications] back in stock (no-op)', { customerId, productId });
-    }
+  processQueue(limit = 50): Promise<number> {
+    return notificationRepository.processQueue(limit);
   }
 }
 
-export const notificationService: NotificationService = new NoopNotificationService();
+export const notificationService: NotificationService = new SupabaseNotificationService();

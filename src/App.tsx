@@ -51,6 +51,7 @@ import { AdminDiscounts } from '@/pages/admin/AdminDiscounts';
 import { AdminReviews } from '@/pages/admin/AdminReviews';
 import { AdminContent } from '@/pages/admin/AdminContent';
 import { AdminHomepage } from '@/pages/admin/AdminHomepage';
+import { AdminNotifications } from '@/pages/admin/AdminNotifications';
 import { AdminAnalytics } from '@/pages/admin/AdminAnalytics';
 import { AdminSettings } from '@/pages/admin/AdminSettings';
 import { AdminUsers } from '@/pages/admin/AdminUsers';
@@ -129,6 +130,7 @@ export default function App() {
               <Route element={<RequireStaffRole roles={['customer_support', 'order_manager', 'admin', 'super_admin']} />}>
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="customers/:id" element={<AdminCustomerDetail />} />
+                <Route path="notifications" element={<AdminNotifications />} />
               </Route>
 
               <Route element={<RequireStaffRole roles={['admin', 'super_admin']} />}>

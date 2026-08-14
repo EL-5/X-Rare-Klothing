@@ -6,6 +6,7 @@ import type {
   DiscountRow,
   HomepageSectionRow,
   InventoryRow,
+  NotificationRow,
   OrderAddressRow,
   OrderItemRow,
   OrderRow,
@@ -29,6 +30,7 @@ import type {
   DiscountAppliesTo,
   HomepageSection,
   InventoryLevel,
+  Notification,
   Money,
   Order,
   OrderAddress,
@@ -272,6 +274,23 @@ export function appliesToToJson(appliesTo: DiscountAppliesTo): Record<string, un
   if ('productIds' in appliesTo) return { product_ids: appliesTo.productIds };
   if ('collectionIds' in appliesTo) return { collection_ids: appliesTo.collectionIds };
   return { all: true };
+}
+
+export function mapNotification(row: NotificationRow): Notification {
+  return {
+    id: row.id,
+    type: row.type,
+    recipientEmail: row.recipient_email,
+    status: row.status,
+    subject: row.subject,
+    body: row.body,
+    relatedOrderId: row.related_order_id,
+    attempts: row.attempts,
+    maxAttempts: row.max_attempts,
+    lastError: row.last_error,
+    createdAt: row.created_at,
+    sentAt: row.sent_at,
+  };
 }
 
 export function mapHomepageSection(row: HomepageSectionRow): HomepageSection {

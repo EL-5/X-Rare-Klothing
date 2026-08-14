@@ -259,6 +259,34 @@ export interface Paginated<T> {
   hasMore: boolean;
 }
 
+export type NotificationType =
+  | 'account_verification'
+  | 'password_reset'
+  | 'order_confirmation'
+  | 'payment_confirmation'
+  | 'order_processing'
+  | 'order_shipped'
+  | 'order_delivered'
+  | 'refund'
+  | 'newsletter';
+
+export type NotificationStatus = 'pending' | 'sent' | 'failed';
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  recipientEmail: string;
+  status: NotificationStatus;
+  subject: string | null;
+  body: string | null;
+  relatedOrderId: string | null;
+  attempts: number;
+  maxAttempts: number;
+  lastError: string | null;
+  createdAt: string;
+  sentAt: string | null;
+}
+
 export type HomepageSectionType = 'hero' | 'product_carousel' | 'banner' | 'editorial' | 'category_grid' | 'newsletter';
 
 /** `config` shape depends on `type` — narrowed by the storefront renderer/admin form, not the type system (see docs/database.md). */

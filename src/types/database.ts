@@ -61,6 +61,17 @@ export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 export type ContentStatus = 'draft' | 'published' | 'archived';
 export type NewsletterSubscriberStatus = 'subscribed' | 'unsubscribed';
 export type HomepageSectionType = 'hero' | 'product_carousel' | 'banner' | 'editorial' | 'category_grid' | 'newsletter';
+export type NotificationType =
+  | 'account_verification'
+  | 'password_reset'
+  | 'order_confirmation'
+  | 'payment_confirmation'
+  | 'order_processing'
+  | 'order_shipped'
+  | 'order_delivered'
+  | 'refund'
+  | 'newsletter';
+export type NotificationStatus = 'pending' | 'sent' | 'failed';
 
 // ============================================================
 // Row shapes
@@ -476,6 +487,23 @@ export type HomepageSectionRow = {
   updated_at: string;
 };
 
+export type NotificationRow = {
+  id: string;
+  type: NotificationType;
+  recipient_email: string;
+  status: NotificationStatus;
+  subject: string | null;
+  body: string | null;
+  data: Record<string, unknown>;
+  related_order_id: string | null;
+  attempts: number;
+  max_attempts: number;
+  last_error: string | null;
+  created_at: string;
+  sent_at: string | null;
+  updated_at: string;
+};
+
 export type SettingRow = {
   key: string;
   value: Record<string, unknown>;
@@ -561,6 +589,7 @@ export type Database = {
       pages: Table<PageRow, 'slug' | 'title'>;
       blog_posts: Table<BlogPostRow, 'slug' | 'title'>;
       homepage_sections: Table<HomepageSectionRow, 'type' | 'title'>;
+      notifications: Table<NotificationRow, 'type' | 'recipient_email'>;
       settings: Table<SettingRow, 'key'>;
       audit_logs: Table<AuditLogRow, 'action' | 'entity_type'>;
     };
@@ -610,6 +639,10 @@ export type Database = {
       refund_order: {
         Args: { _order_id: string; _amount_cents: number; _restock: boolean; _reason: string | null };
         Returns: void;
+      };
+      process_pending_notifications: {
+        Args: { _limit: number };
+        Returns: number;
       };
     };
     Enums: Record<string, never>;

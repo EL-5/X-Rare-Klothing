@@ -13,6 +13,7 @@ import {
   BarChart3,
   Settings,
   ShieldCheck,
+  Mail,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { AdminRole } from '@/types/domain';
@@ -34,6 +35,12 @@ export const adminNavItems: AdminNavItem[] = [
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart, roles: ['order_manager', 'admin', 'super_admin'] },
   { label: 'Customers', href: '/admin/customers', icon: Users, roles: ['customer_support', 'order_manager', 'admin', 'super_admin'] },
   { label: 'Discounts', href: '/admin/discounts', icon: Percent, roles: ['order_manager', 'admin', 'super_admin'] },
+  {
+    label: 'Notifications',
+    href: '/admin/notifications',
+    icon: Mail,
+    roles: ['order_manager', 'customer_support', 'admin', 'super_admin'],
+  },
   { label: 'Reviews', href: '/admin/reviews', icon: Star, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Content', href: '/admin/content', icon: FileText, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Homepage', href: '/admin/homepage', icon: LayoutTemplate, roles: ['content_manager', 'admin', 'super_admin'] },
@@ -52,6 +59,7 @@ export const adminRouteLabels: Record<string, string> = {
   orders: 'Orders',
   customers: 'Customers',
   discounts: 'Discounts',
+  notifications: 'Notifications',
   reviews: 'Reviews',
   content: 'Content',
   homepage: 'Homepage',
