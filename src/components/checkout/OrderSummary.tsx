@@ -19,14 +19,16 @@ export function OrderSummary({ cart, shippingOverride, taxOverride, totalOverrid
         {cart.items.map((item) => (
           <li key={item.id} className="flex gap-3">
             <div className="relative h-16 w-14 shrink-0 bg-surface-muted">
-              {item.product.images[0] ? <img src={item.product.images[0]} alt="" className="h-full w-full object-cover" /> : null}
+              {item.product.images[0] ? (
+                <img src={item.product.images[0]} alt="" loading="lazy" className="h-full w-full object-cover" />
+              ) : null}
               <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-surface">
                 {item.quantity}
               </span>
             </div>
             <div className="flex flex-1 flex-col">
               <p className="text-sm text-ink">{item.product.title}</p>
-              <p className="text-xs text-ink/50">{[item.variant.color, item.variant.size].filter(Boolean).join(' / ')}</p>
+              <p className="text-xs text-ink/60">{[item.variant.color, item.variant.size].filter(Boolean).join(' / ')}</p>
             </div>
             <p className="text-sm text-ink">{formatMoney(item.lineTotal)}</p>
           </li>

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 
 export interface AuthCardProps {
   title: string;
@@ -8,6 +9,8 @@ export interface AuthCardProps {
 }
 
 export function AuthCard({ title, subtitle, children, footer }: AuthCardProps) {
+  useDocumentHead({ title, path: window.location.pathname, noindex: true });
+
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-6 py-16">
       <h1 className="text-2xl font-semibold uppercase tracking-wide text-ink">{title}</h1>

@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         id={inputId}
         className={cn(
           'h-11 w-full rounded-[var(--radius-input)] border border-border bg-surface px-4 text-sm text-ink',
-          'placeholder:text-ink/40 transition-colors duration-[var(--duration-base)]',
+          'placeholder:text-ink/60 transition-colors duration-[var(--duration-base)]',
           'focus:border-ink focus:outline-none',
           error ? 'border-danger' : null,
           className,

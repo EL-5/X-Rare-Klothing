@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Drawer } from '@/components/ui/Drawer';
 import { primaryNav } from '@/config/navigation';
@@ -19,6 +19,9 @@ export interface MobileNavigationProps {
  */
 export function MobileNavigation({ isOpen, onClose }: MobileNavigationProps) {
   const [activeItem, setActiveItem] = useState<NavItem | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const slideFrom = (fromRight: boolean) => (prefersReducedMotion ? { opacity: 0 } : { x: fromRight ? '100%' : '-100%' });
+  const slideRest = prefersReducedMotion ? { opacity: 1 } : { x: 0 };
 
   const handleClose = () => {
     onClose();
@@ -32,9 +35,9 @@ export function MobileNavigation({ isOpen, onClose }: MobileNavigationProps) {
           {!activeItem ? (
             <motion.ul
               key="root"
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
+              initial={slideFrom(false)}
+              animate={slideRest}
+              exit={slideFrom(false)}
               transition={{ duration: motionTokens.duration.base, ease: motionTokens.ease.standard }}
               className="flex flex-col gap-1 p-6"
             >
@@ -64,9 +67,9 @@ export function MobileNavigation({ isOpen, onClose }: MobileNavigationProps) {
           ) : (
             <motion.div
               key="submenu"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              initial={slideFrom(true)}
+              animate={slideRest}
+              exit={slideFrom(true)}
               transition={{ duration: motionTokens.duration.base, ease: motionTokens.ease.standard }}
               className="flex flex-col gap-1 p-6"
             >

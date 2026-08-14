@@ -1,9 +1,11 @@
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { AdminSidebar } from '@/components/admin/layout/AdminSidebar';
 import { AdminMobileNav } from '@/components/admin/layout/AdminMobileNav';
 import { AdminTopbar } from '@/components/admin/layout/AdminTopbar';
 import { AdminToaster } from '@/components/admin/ui/AdminToaster';
 import { useDisclosure } from '@/hooks/useDisclosure';
+import { PageLoader } from '@/components/ui/PageLoader';
 
 /**
  * Admin's own layout shell — intentionally not built from the storefront's
@@ -23,7 +25,9 @@ export function AdminLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <AdminTopbar onOpenMobileNav={mobileNav.open} />
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
 

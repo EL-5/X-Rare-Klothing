@@ -14,7 +14,7 @@ export interface EditorialConfig {
 export function EditorialSection({ label, repeatedText, body }: EditorialConfig) {
   return (
     <section className="border-y border-border bg-surface-muted py-[var(--spacing-section-mobile)] lg:py-[var(--spacing-section-desktop)]">
-      <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">{label}</p>
+      <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-ink/60">{label}</p>
 
       <div className="mt-6 overflow-hidden">
         <div className="flex w-max animate-marquee gap-16 whitespace-nowrap" aria-hidden="true">

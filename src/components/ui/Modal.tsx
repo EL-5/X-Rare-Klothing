@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { motionTokens } from '@/lib/tokens';
 import { cn } from '@/lib/cn';
 
@@ -17,6 +18,9 @@ export interface ModalProps {
 /** Centered dialog — used for the promo popup, confirmation prompts, etc. */
 export function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   useLockBodyScroll(isOpen);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(panelRef, isOpen);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -45,12 +49,14 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
             onClick={onClose}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
+            ref={panelRef}
+            tabIndex={-1}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
             transition={{ duration: motionTokens.duration.base, ease: motionTokens.ease.standard }}
             className={cn(
-              'relative w-full max-w-lg rounded-[var(--radius-card)] bg-surface p-6 shadow-[var(--shadow-popover)]',
+              'relative w-full max-w-lg rounded-[var(--radius-card)] bg-surface p-6 shadow-[var(--shadow-popover)] outline-none',
               className,
             )}
           >

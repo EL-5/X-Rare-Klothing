@@ -91,7 +91,7 @@ export function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
     <Drawer isOpen={isOpen} onClose={onClose} title="Search">
       <div className="p-6">
         <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
+          <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60" />
           <Input
             type="search"
             autoFocus
@@ -108,7 +108,7 @@ export function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
 
         {!debouncedQuery.trim() && recent.length > 0 ? (
           <div className="mt-6">
-            <p className="text-xs uppercase tracking-wide text-ink/50">Recent Searches</p>
+            <p className="text-xs uppercase tracking-wide text-ink/60">Recent Searches</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {recent.map((term) => (
                 <button
@@ -133,7 +133,7 @@ export function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
             </p>
           ) : result ? (
             <>
-              <p className="mb-3 text-xs uppercase tracking-wide text-ink/50">
+              <p className="mb-3 text-xs uppercase tracking-wide text-ink/60">
                 {result.total} result{result.total === 1 ? '' : 's'} found
               </p>
               <ul id="search-results-list" role="listbox" className="flex flex-col gap-4">

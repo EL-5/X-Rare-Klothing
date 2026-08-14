@@ -16,6 +16,8 @@ import { useVariantSelection } from '@/hooks/useVariantSelection';
 import { productService } from '@/services/productService';
 import { inventoryService } from '@/services/inventoryService';
 import { analyticsService } from '@/services/analyticsService';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
+import { useStructuredData } from '@/hooks/useStructuredData';
 import { ROUTES } from '@/config/routes';
 import type { InventoryLevel, Product } from '@/types/domain';
 
@@ -50,6 +52,58 @@ export function ProductDetail() {
     setQuantity(1);
   }, [activeVariant?.id]);
 
+  const activeInventoryForHead = activeVariant ? inventoryByVariant.get(activeVariant.id) : undefined;
+
+  useDocumentHead({
+    title: product ? product.title : 'Product',
+    description: product?.description
+      ? product.description.slice(0, 160)
+      : 'Shop rare, design-led pieces from X-Rare.',
+    path: ROUTES.product(slug),
+    image: product?.images[0],
+    type: 'product',
+  });
+
+  useStructuredData(
+    product
+      ? [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.title,
+            description: product.description ?? undefined,
+            image: product.images,
+            sku: activeVariant?.sku ?? undefined,
+            brand: product.brand ? { '@type': 'Brand', name: product.brand } : undefined,
+            offers: {
+              '@type': 'Offer',
+              url: `${window.location.origin}${ROUTES.product(slug)}`,
+              priceCurrency: (activeVariant?.price ?? product.price).currency,
+              price: ((activeVariant?.price ?? product.price).cents / 100).toFixed(2),
+              availability:
+                activeInventoryForHead === undefined || activeInventoryForHead.available > 0
+                  ? 'https://schema.org/InStock'
+                  : 'https://schema.org/OutOfStock',
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: `${window.location.origin}${ROUTES.home}` },
+              { '@type': 'ListItem', position: 2, name: 'Shop', item: `${window.location.origin}${ROUTES.shop}` },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: product.title,
+                item: `${window.location.origin}${ROUTES.product(slug)}`,
+              },
+            ],
+          },
+        ]
+      : null,
+  );
+
   if (product === undefined) {
     return <div className="mx-auto max-w-[var(--container-max)] px-6 py-24 lg:px-8" />;
   }
@@ -63,7 +117,7 @@ export function ProductDetail() {
   return (
     <div>
       <div className="mx-auto max-w-[var(--container-max)] px-6 py-10 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-6 text-xs text-ink/50">
+        <nav aria-label="Breadcrumb" className="mb-6 text-xs text-ink/60">
           <Link to={ROUTES.home} className="hover:text-ink">
             Home
           </Link>

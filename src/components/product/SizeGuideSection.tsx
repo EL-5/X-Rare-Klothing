@@ -11,7 +11,7 @@ export function SizeGuideSection() {
     <Accordion title="Size Guide">
       <table className="w-full border-collapse text-left text-xs">
         <thead>
-          <tr className="border-b border-border text-ink/50">
+          <tr className="border-b border-border text-ink/60">
             <th className="py-2 pr-4 font-medium uppercase tracking-wide">Size</th>
             <th className="py-2 pr-4 font-medium uppercase tracking-wide">Chest</th>
             <th className="py-2 font-medium uppercase tracking-wide">Waist</th>

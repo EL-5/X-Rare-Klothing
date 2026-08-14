@@ -69,14 +69,14 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       ) : (
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between px-6 pt-4">
-            <p className="text-xs text-ink/50">
+            <p className="text-xs text-ink/60">
               {cart.items.reduce((sum, item) => sum + item.quantity, 0)} item{cart.items.length === 1 ? '' : 's'}
             </p>
             <button
               type="button"
               onClick={() => void handleClearCart()}
               disabled={isClearing}
-              className="text-xs text-ink/50 underline-offset-2 hover:underline disabled:opacity-50"
+              className="text-xs text-ink/60 underline-offset-2 hover:underline disabled:opacity-50"
             >
               Clear cart
             </button>
@@ -116,7 +116,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <button
                     type="button"
                     onClick={() => void removeItem(item.id)}
-                    className="mt-1 self-start text-xs text-ink/50 underline-offset-2 hover:underline"
+                    className="mt-1 self-start text-xs text-ink/60 underline-offset-2 hover:underline"
                   >
                     Remove
                   </button>
@@ -129,7 +129,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             {cart.discountCode ? (
               <div className="mb-4 flex items-center justify-between rounded-sm bg-surface-muted px-3 py-2 text-xs">
                 <span className="uppercase tracking-wide text-ink">{cart.discountCode}</span>
-                <button type="button" onClick={() => void removeDiscountCode()} aria-label="Remove discount code" className="text-ink/50 hover:text-ink">
+                <button type="button" onClick={() => void removeDiscountCode()} aria-label="Remove discount code" className="text-ink/60 hover:text-ink">
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -138,6 +138,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <input
                   type="text"
                   placeholder="Discount code"
+                  aria-label="Discount code"
                   value={discountInput}
                   onChange={(e) => setDiscountInput(e.target.value)}
                   className="h-9 w-full rounded-[var(--radius-input)] border border-border bg-surface px-3 text-xs text-ink focus:border-ink focus:outline-none"

@@ -15,6 +15,7 @@ import { taxService } from '@/services/taxService';
 import { checkoutService } from '@/services/checkoutService';
 import { paymentService } from '@/services/paymentService';
 import { analyticsService } from '@/services/analyticsService';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 import { ROUTES } from '@/config/routes';
 import { formatMoney } from '@/utils/money';
 import type { Address, Money, ShippingRate } from '@/types/domain';
@@ -79,6 +80,8 @@ export function Checkout() {
   const navigate = useNavigate();
   const { cart, isLoading: isCartLoading, applyDiscountCode, removeDiscountCode, refresh: refreshCart } = useCart();
   const { isAuthenticated, profile } = useAuth();
+
+  useDocumentHead({ title: 'Checkout', path: ROUTES.checkout, noindex: true });
 
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState<AddressForm>(EMPTY_ADDRESS);
@@ -367,7 +370,7 @@ export function Checkout() {
             ) : (
               <div className="mt-3">
                 <Input type="email" required label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <p className="mt-2 text-xs text-ink/50">
+                <p className="mt-2 text-xs text-ink/60">
                   Have an account?{' '}
                   <Link to={ROUTES.login} className="underline-offset-2 hover:underline">
                     Log in
@@ -437,7 +440,7 @@ export function Checkout() {
             <h2 className="text-xs font-semibold uppercase tracking-wide text-ink">Shipping Method</h2>
             <div className="mt-3 flex flex-col gap-2">
               {eligibleRates.length === 0 ? (
-                <p className="text-sm text-ink/50">Enter your address to see shipping options.</p>
+                <p className="text-sm text-ink/60">Enter your address to see shipping options.</p>
               ) : (
                 eligibleRates.map((rate) => (
                   <label
@@ -468,7 +471,7 @@ export function Checkout() {
             {cart.discountCode ? (
               <div className="mt-3 flex items-center justify-between rounded-sm bg-surface-muted px-3 py-2 text-xs">
                 <span className="uppercase tracking-wide text-ink">{cart.discountCode} applied</span>
-                <button type="button" onClick={() => void removeDiscountCode()} className="text-ink/50 hover:text-ink">
+                <button type="button" onClick={() => void removeDiscountCode()} className="text-ink/60 hover:text-ink">
                   Remove
                 </button>
               </div>
@@ -477,6 +480,7 @@ export function Checkout() {
                 <input
                   type="text"
                   placeholder="Discount code"
+                  aria-label="Discount code"
                   value={discountInput}
                   onChange={(e) => setDiscountInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -507,7 +511,7 @@ export function Checkout() {
 
             {paymentMethod === 'card' ? (
               <>
-                <p className="mt-3 flex items-center gap-1.5 text-xs text-ink/50">
+                <p className="mt-3 flex items-center gap-1.5 text-xs text-ink/60">
                   <Lock className="h-3 w-3" /> Demo payment — no real card is charged. Any 16-digit number succeeds; one ending in 0002 is declined.
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-4">
@@ -525,7 +529,7 @@ export function Checkout() {
                 </div>
               </>
             ) : (
-              <p className="mt-3 flex items-center gap-1.5 text-xs text-ink/50">
+              <p className="mt-3 flex items-center gap-1.5 text-xs text-ink/60">
                 <Lock className="h-3 w-3" /> You'll be redirected to {paymentMethod === 'paystack' ? 'Paystack' : 'Flutterwave'} to complete payment
                 securely. Not deployed in this environment yet — see project notes.
               </p>

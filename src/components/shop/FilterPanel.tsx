@@ -37,7 +37,7 @@ export function FilterPanel({ listing }: FilterPanelProps) {
       <div className="flex items-center justify-between">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-ink">Filter</h2>
         {listing.activeFilterCount > 0 ? (
-          <button type="button" onClick={listing.clearFilters} className="text-xs text-ink/50 underline-offset-2 hover:underline">
+          <button type="button" onClick={listing.clearFilters} className="text-xs text-ink/60 underline-offset-2 hover:underline">
             Clear all ({listing.activeFilterCount})
           </button>
         ) : null}
@@ -59,16 +59,18 @@ export function FilterPanel({ listing }: FilterPanelProps) {
             min={0}
             inputMode="decimal"
             placeholder="Min"
+            aria-label="Minimum price"
             value={minInput}
             onChange={(e) => setMinInput(e.target.value)}
             className="h-9 w-full rounded-[var(--radius-input)] border border-border bg-surface px-2 text-sm text-ink focus:border-ink focus:outline-none"
           />
-          <span className="text-ink/40">–</span>
+          <span className="text-ink/60">–</span>
           <input
             type="number"
             min={0}
             inputMode="decimal"
             placeholder="Max"
+            aria-label="Maximum price"
             value={maxInput}
             onChange={(e) => setMaxInput(e.target.value)}
             className="h-9 w-full rounded-[var(--radius-input)] border border-border bg-surface px-2 text-sm text-ink focus:border-ink focus:outline-none"

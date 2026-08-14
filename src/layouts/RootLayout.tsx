@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -6,6 +6,17 @@ import { CartProvider } from '@/stores/CartStore';
 import { WishlistProvider } from '@/stores/WishlistStore';
 import { UIProvider } from '@/stores/UIStore';
 import { analyticsService } from '@/services/analyticsService';
+import { PageLoader } from '@/components/ui/PageLoader';
+import { useStructuredData } from '@/hooks/useStructuredData';
+
+const ORGANIZATION_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'X-Rare',
+  url: typeof window !== 'undefined' ? window.location.origin : undefined,
+  logo: typeof window !== 'undefined' ? `${window.location.origin}/logo.png` : undefined,
+  sameAs: ['https://instagram.com'],
+};
 
 function PageViewTracker() {
   const location = useLocation();
@@ -17,6 +28,8 @@ function PageViewTracker() {
 
 /** Storefront chrome — header/footer/cart/wishlist. Not used by /admin, which has its own minimal layout. */
 export function RootLayout() {
+  useStructuredData(ORGANIZATION_SCHEMA);
+
   return (
     <CartProvider>
       <WishlistProvider>
@@ -25,7 +38,9 @@ export function RootLayout() {
             <PageViewTracker />
             <Header />
             <main className="flex-1">
-              <Outlet />
+              <Suspense fallback={<PageLoader />}>
+                <Outlet />
+              </Suspense>
             </main>
             <Footer />
           </div>

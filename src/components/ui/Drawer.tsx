@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { motionTokens } from '@/lib/tokens';
 import { cn } from '@/lib/cn';
 
@@ -24,6 +25,9 @@ export interface DrawerProps {
  */
 export function Drawer({ isOpen, onClose, side = 'right', title, children, className }: DrawerProps) {
   useLockBodyScroll(isOpen);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(panelRef, isOpen);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -47,12 +51,14 @@ export function Drawer({ isOpen, onClose, side = 'right', title, children, class
             onClick={onClose}
           />
           <motion.div
-            initial={{ x: side === 'right' ? '100%' : '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: side === 'right' ? '100%' : '-100%' }}
+            ref={panelRef}
+            tabIndex={-1}
+            initial={prefersReducedMotion ? { opacity: 0 } : { x: side === 'right' ? '100%' : '-100%' }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { x: 0 }}
+            exit={prefersReducedMotion ? { opacity: 0 } : { x: side === 'right' ? '100%' : '-100%' }}
             transition={{ duration: motionTokens.duration.base, ease: motionTokens.ease.standard }}
             className={cn(
-              'absolute top-0 flex h-full w-full max-w-md flex-col bg-surface shadow-[var(--shadow-drawer)]',
+              'absolute top-0 flex h-full w-full max-w-md flex-col bg-surface shadow-[var(--shadow-drawer)] outline-none',
               side === 'right' ? 'right-0' : 'left-0',
               className,
             )}

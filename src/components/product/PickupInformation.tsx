@@ -14,7 +14,7 @@ export function PickupInformation() {
   return (
     <div className="border border-border p-4">
       <div className="flex items-start gap-3">
-        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ink/50" />
+        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ink/60" />
         <div>
           <p className="text-sm font-medium text-ink">Pickup available at X-Rare Flagship Store</p>
           <p className="mt-0.5 text-xs text-ink/60">Usually ready in 1 hour</p>

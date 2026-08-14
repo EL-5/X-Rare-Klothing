@@ -9,7 +9,7 @@ export function QuantitySelector({ quantity, onChange, max }: QuantitySelectorPr
 
   return (
     <div>
-      <p className="text-xs uppercase tracking-wide text-ink/50">Quantity</p>
+      <p className="text-xs uppercase tracking-wide text-ink/60">Quantity</p>
       <div className="mt-2 flex h-11 w-fit items-center border border-border">
         <button
           type="button"

@@ -10,7 +10,7 @@ export function ColorSelector({ colors, selected, onChange }: ColorSelectorProps
 
   return (
     <div>
-      <p className="text-xs uppercase tracking-wide text-ink/50">
+      <p className="text-xs uppercase tracking-wide text-ink/60">
         Color{selected ? <span className="ml-1 text-ink">— {selected}</span> : null}
       </p>
       <div role="radiogroup" aria-label="Color" className="mt-2 flex flex-wrap gap-2">

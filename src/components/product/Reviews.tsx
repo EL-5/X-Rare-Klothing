@@ -51,7 +51,7 @@ export function Reviews({ productId }: ReviewsProps) {
 
       <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px]">
         {reviews === null ? (
-          <p className="text-sm text-ink/50">Loading reviews…</p>
+          <p className="text-sm text-ink/60">Loading reviews…</p>
         ) : reviews.length === 0 ? (
           <p className="text-sm text-ink/60">No reviews yet for this product.</p>
         ) : (
@@ -67,17 +67,23 @@ export function Reviews({ productId }: ReviewsProps) {
                       </span>
                     ) : null}
                     {review.status !== 'approved' ? (
-                      <span className="text-xs uppercase tracking-wide text-ink/40">{review.status}</span>
+                      <span className="text-xs uppercase tracking-wide text-ink/60">{review.status}</span>
                     ) : null}
-                    <time className="text-xs text-ink/40">{new Date(review.createdAt).toLocaleDateString()}</time>
+                    <time className="text-xs text-ink/60">{new Date(review.createdAt).toLocaleDateString()}</time>
                   </div>
                 </div>
                 {review.title ? <p className="mt-2 text-sm font-medium text-ink">{review.title}</p> : null}
                 {review.body ? <p className="mt-1 text-sm text-ink/70">{review.body}</p> : null}
                 {review.images.length > 0 ? (
                   <div className="mt-3 flex gap-2">
-                    {review.images.map((image) => (
-                      <img key={image.id} src={image.url} alt="" className="h-16 w-16 rounded-[var(--radius-input)] object-cover" />
+                    {review.images.map((image, index) => (
+                      <img
+                        key={image.id}
+                        src={image.url}
+                        alt={`Photo ${index + 1} from ${review.title ? `the review "${review.title}"` : 'this review'}`}
+                        loading="lazy"
+                        className="h-16 w-16 rounded-[var(--radius-input)] object-cover"
+                      />
                     ))}
                   </div>
                 ) : null}

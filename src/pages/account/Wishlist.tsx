@@ -78,6 +78,7 @@ export function Wishlist() {
                       <img
                         src={item.product.image}
                         alt={item.product.title}
+                        loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)] group-hover:scale-105"
                       />
                     ) : null}
@@ -92,7 +93,7 @@ export function Wishlist() {
                   </Link>
                   <p className="mt-1 text-sm text-ink">
                     {item.product.compareAtPrice ? (
-                      <span className="mr-2 text-ink/40 line-through">{formatMoney(item.product.compareAtPrice)}</span>
+                      <span className="mr-2 text-ink/60 line-through">{formatMoney(item.product.compareAtPrice)}</span>
                     ) : null}
                     {formatMoney(item.product.price)}
                   </p>
@@ -111,14 +112,14 @@ export function Wishlist() {
                 </>
               ) : (
                 <div className="flex aspect-[3/4] w-full items-center justify-center bg-surface-muted">
-                  <p className="px-4 text-center text-sm text-ink/50">Product no longer available</p>
+                  <p className="px-4 text-center text-sm text-ink/60">Product no longer available</p>
                 </div>
               )}
               <button
                 type="button"
                 onClick={() => handleRemove(item.id)}
                 disabled={pendingId === item.id}
-                className="mt-2 self-start text-xs text-ink/50 underline-offset-2 hover:underline disabled:opacity-50"
+                className="mt-2 self-start text-xs text-ink/60 underline-offset-2 hover:underline disabled:opacity-50"
               >
                 Remove
               </button>

@@ -8,6 +8,7 @@ import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useRecentSearches } from '@/hooks/useRecentSearches';
 import { searchService } from '@/services/searchService';
 import { analyticsService } from '@/services/analyticsService';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 import type { Product, SearchResult } from '@/types/domain';
 
 const PAGE_SIZE = 24;
@@ -28,6 +29,12 @@ export function SearchResults() {
   const [result, setResult] = useState<SearchResult | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const { recent, record, clear } = useRecentSearches();
+
+  useDocumentHead({
+    title: query.trim() ? `Search results for "${query.trim()}"` : 'Search',
+    path: '/search',
+    noindex: true,
+  });
 
   useEffect(() => setInputValue(query), [query]);
 
@@ -80,13 +87,14 @@ export function SearchResults() {
 
   return (
     <div className="mx-auto max-w-[var(--container-max)] px-6 py-10 lg:px-8">
-      <h1 className="text-xs font-semibold uppercase tracking-wide text-ink/50">Search Results</h1>
+      <h1 className="text-xs font-semibold uppercase tracking-wide text-ink/60">Search Results</h1>
 
       <div className="relative mt-4 max-w-xl">
-        <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
+        <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/60" />
         <input
           type="search"
           autoFocus
+          aria-label="Search for anything"
           placeholder="Search for anything"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -97,8 +105,8 @@ export function SearchResults() {
       {!query.trim() && recent.length > 0 ? (
         <div className="mt-6">
           <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-wide text-ink/50">Recent Searches</p>
-            <button type="button" onClick={clear} className="text-xs text-ink/40 underline-offset-2 hover:underline">
+            <p className="text-xs uppercase tracking-wide text-ink/60">Recent Searches</p>
+            <button type="button" onClick={clear} className="text-xs text-ink/60 underline-offset-2 hover:underline">
               Clear
             </button>
           </div>
@@ -130,7 +138,7 @@ export function SearchResults() {
             </div>
           ) : (
             <>
-              <p className="mb-6 text-xs uppercase tracking-wide text-ink/50">
+              <p className="mb-6 text-xs uppercase tracking-wide text-ink/60">
                 {result.total} result{result.total === 1 ? '' : 's'} found for “{result.query}”
               </p>
               <ProductGrid products={result.products} onQuickView={setQuickViewProduct} />

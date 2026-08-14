@@ -23,14 +23,16 @@ export function CategoryGrid() {
           ? Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="aspect-[4/5] w-full" />)
           : categories.map((category) => (
               <Link key={category.id} to={ROUTES.category(category.slug)} className="group relative block aspect-[4/5] overflow-hidden bg-surface-muted">
-                <img
-                  src={category.image ?? `https://picsum.photos/seed/hf-category-${category.slug}/800/1000`}
-                  alt=""
-                  width={800}
-                  height={1000}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)] group-hover:scale-105"
-                />
+                {category.image ? (
+                  <img
+                    src={category.image}
+                    alt=""
+                    width={800}
+                    height={1000}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)] group-hover:scale-105"
+                  />
+                ) : null}
                 <div className="absolute inset-0 bg-ink/20" />
                 <span className="absolute inset-x-0 bottom-6 text-center text-sm font-semibold uppercase tracking-[0.2em] text-surface">
                   {category.name}

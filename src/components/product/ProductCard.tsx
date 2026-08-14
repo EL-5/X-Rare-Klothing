@@ -119,11 +119,11 @@ export function ProductCard({ product, priority = false, inStock, onQuickView, c
       <div className="mt-3 flex flex-col gap-1">
         <h3 className="text-sm uppercase tracking-wide text-ink">{product.title}</h3>
         <p className="text-sm text-ink">
-          {isOnSale ? <span className="mr-2 text-ink/40 line-through">{formatMoney(product.compareAtPrice!)}</span> : null}
+          {isOnSale ? <span className="mr-2 text-ink/60 line-through">{formatMoney(product.compareAtPrice!)}</span> : null}
           {formatMoney(product.price)}
         </p>
         {swatchColors.length > 0 ? (
-          <p className="text-xs text-ink/50">Available in {swatchColors.length} color{swatchColors.length === 1 ? '' : 's'}</p>
+          <p className="text-xs text-ink/60">Available in {swatchColors.length} color{swatchColors.length === 1 ? '' : 's'}</p>
         ) : null}
       </div>
     </Link>

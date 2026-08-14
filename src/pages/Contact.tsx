@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
 import { settingsService } from '@/services/settingsService';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 
 export function Contact() {
   const [supportEmail, setSupportEmail] = useState<string | null>(null);
+
+  useDocumentHead({
+    title: 'Contact',
+    description: "Questions about an order, sizing, or anything else — we're here to help.",
+    path: '/contact',
+  });
 
   useEffect(() => {
     settingsService.getAll().then((settings) => {

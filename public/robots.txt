@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /search
+Disallow: /reset-password
+Disallow: /auth/callback
+
+Sitemap: https://x-rare-klothing.example/sitemap.xml

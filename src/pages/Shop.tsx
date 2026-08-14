@@ -11,6 +11,7 @@ import { QuickViewDrawer } from '@/components/product/QuickViewDrawer';
 import { Button } from '@/components/ui/Button';
 import { collectionService } from '@/services/collectionService';
 import { categoryService } from '@/services/categoryService';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 import { ROUTES } from '@/config/routes';
 import type { Product } from '@/types/domain';
 
@@ -48,9 +49,16 @@ export function Shop({ scope }: ShopProps) {
     }
   }, [scope, slug]);
 
+  const path = scope === 'collection' ? ROUTES.collection(slug) : scope === 'category' ? ROUTES.category(slug) : ROUTES.shop;
+  useDocumentHead({
+    title: title ?? 'Shop',
+    description: description ?? 'Shop the full X-Rare range — new arrivals, collections, and accessories.',
+    path,
+  });
+
   return (
     <div className="mx-auto max-w-[var(--container-max)] px-6 py-10 lg:px-8">
-      <nav aria-label="Breadcrumb" className="mb-6 text-xs text-ink/50">
+      <nav aria-label="Breadcrumb" className="mb-6 text-xs text-ink/60">
         <Link to={ROUTES.home} className="hover:text-ink">
           Home
         </Link>
@@ -87,7 +95,7 @@ export function Shop({ scope }: ShopProps) {
                 <SlidersHorizontal className="h-4 w-4" />
                 Filter{listing.activeFilterCount > 0 ? ` (${listing.activeFilterCount})` : ''}
               </button>
-              <p className="text-xs text-ink/50">
+              <p className="text-xs text-ink/60">
                 {listing.isLoading ? 'Loading…' : `${listing.totalCount} result${listing.totalCount === 1 ? '' : 's'}`}
               </p>
             </div>

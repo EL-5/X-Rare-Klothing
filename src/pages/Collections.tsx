@@ -3,11 +3,18 @@ import { Link } from 'react-router-dom';
 import { collectionService } from '@/services/collectionService';
 import { ROUTES } from '@/config/routes';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 import type { Collection } from '@/types/domain';
 
 /** Public index of published collections — seasonal drops and curated edits. */
 export function Collections() {
   const [collections, setCollections] = useState<Collection[] | null>(null);
+
+  useDocumentHead({
+    title: 'Collections',
+    description: 'Seasonal collections and special drops from X-Rare.',
+    path: '/collections',
+  });
 
   useEffect(() => {
     collectionService.list().then(setCollections);

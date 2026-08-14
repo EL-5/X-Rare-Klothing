@@ -50,7 +50,7 @@ export function QuickViewDrawer({ product, onClose }: QuickViewDrawerProps) {
           <h2 className="mt-4 text-sm uppercase tracking-wide text-ink">{product.title}</h2>
           <p className="mt-1 text-sm text-ink">
             {product.compareAtPrice && product.compareAtPrice.cents > product.price.cents ? (
-              <span className="mr-2 text-ink/40 line-through">{formatMoney(product.compareAtPrice)}</span>
+              <span className="mr-2 text-ink/60 line-through">{formatMoney(product.compareAtPrice)}</span>
             ) : null}
             {formatMoney(activeVariant?.price ?? product.price)}
           </p>

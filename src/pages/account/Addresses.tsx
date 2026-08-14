@@ -137,7 +137,7 @@ export function Addresses() {
           {addresses.map((address) => (
             <div key={address.id} className="border border-border p-4 text-sm">
               {address.isDefault ? (
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/50">Default {address.type}</p>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/60">Default {address.type}</p>
               ) : null}
               <p className="font-medium text-ink">
                 {address.firstName} {address.lastName}

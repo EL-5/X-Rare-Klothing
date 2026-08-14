@@ -1,6 +1,9 @@
+import { Suspense } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { cn } from '@/lib/cn';
 import { ROUTES } from '@/config/routes';
+import { PageLoader } from '@/components/ui/PageLoader';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 
 const navItems = [
   { label: 'Overview', href: ROUTES.account, end: true },
@@ -12,6 +15,8 @@ const navItems = [
 ];
 
 export function AccountLayout() {
+  useDocumentHead({ title: 'Account', path: ROUTES.account, noindex: true });
+
   return (
     <div className="mx-auto max-w-[var(--container-max)] px-6 py-12 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-[200px_1fr]">
@@ -33,7 +38,9 @@ export function AccountLayout() {
           ))}
         </nav>
         <div className="min-w-0">
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </div>
       </div>
     </div>

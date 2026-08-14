@@ -1,4 +1,12 @@
+import { useDocumentHead } from '@/hooks/useDocumentHead';
+
 export function About() {
+  useDocumentHead({
+    title: 'About',
+    description: 'The story behind X-Rare — rare by design, different by nature.',
+    path: '/about',
+  });
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
       <h1 className="text-xs font-semibold uppercase tracking-wide text-ink">Our Story</h1>

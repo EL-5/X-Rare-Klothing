@@ -1,4 +1,6 @@
 import { Accordion } from '@/components/ui/Accordion';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
+import { useStructuredData } from '@/hooks/useStructuredData';
 
 const faqs = [
   {
@@ -24,6 +26,21 @@ const faqs = [
 ];
 
 export function FAQ() {
+  useDocumentHead({
+    title: 'FAQ',
+    description: 'Shipping, returns, sizing, order tracking, and payment questions answered.',
+    path: '/faq',
+  });
+  useStructuredData({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  });
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
       <h1 className="text-xs font-semibold uppercase tracking-wide text-ink">Frequently Asked Questions</h1>
