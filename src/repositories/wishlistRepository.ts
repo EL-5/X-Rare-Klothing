@@ -33,8 +33,24 @@ async function getOrCreateWishlistId(profileId: string): Promise<string> {
     .insert({ profile_id: profileId })
     .select('id')
     .single();
-  if (error) throw error;
-  return created.id;
+  if (!error) return created.id;
+
+  // Check-then-insert race: two concurrent calls (React StrictMode's
+  // double-invoked effects during dev being the most common trigger, but a
+  // customer with two tabs open hits the same window) can both see "no
+  // row yet" and both try to insert — confirmed live via a real
+  // `wishlists_profile_id_key` unique-violation (23505). Whichever loses
+  // the race just re-reads the row the winner created instead of failing.
+  if (error.code === '23505') {
+    const { data: winner, error: reReadError } = await supabase
+      .from('wishlists')
+      .select('id')
+      .eq('profile_id', profileId)
+      .single();
+    if (reReadError) throw reReadError;
+    return winner.id;
+  }
+  throw error;
 }
 
 export const wishlistRepository = {

@@ -13,8 +13,8 @@ const quickLinks = [
 ];
 
 const shopLinks = [
-  { label: 'Shop', href: ROUTES.shop },
-  { label: 'Shop All', href: ROUTES.collection('all') },
+  { label: 'Shop All', href: ROUTES.shop },
+  { label: 'Collections', href: ROUTES.collections },
 ];
 
 const DEFAULT_TAGLINE = 'Rare by design. Different by nature.';

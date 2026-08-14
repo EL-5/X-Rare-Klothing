@@ -9,14 +9,26 @@ export interface UserRoleAssignment {
 }
 
 /**
- * Reads the current session's own admin roles (RLS: "Users can read own
- * roles" — `user_id = auth.uid()`). This is purely for client-side
- * UI/route-gating convenience; it is never the security boundary — see
- * docs/authorization.md.
+ * Reads the current session's own admin roles. This is purely for
+ * client-side UI/route-gating convenience; it is never the security
+ * boundary — see docs/authorization.md.
+ *
+ * Must filter by `user_id` explicitly rather than relying on RLS alone:
+ * the effective SELECT policy on `user_roles` is "own row OR staff" (any
+ * staff member can read the full roster, which the admin user-management
+ * page needs), so an unfiltered query from a staff account returns every
+ * role ever assigned to every staff account, not just the caller's own —
+ * confirmed live during Batch 22 QA (an inventory_manager-only test
+ * account was seeing content_manager/order_manager/customer_support nav
+ * items and passing hasAnyRole() checks for roles it didn't have).
  */
 export const roleRepository = {
   async getMyRoles(): Promise<AdminRole[]> {
-    const { data, error } = await supabase.from('user_roles').select('role');
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
+    const { data, error } = await supabase.from('user_roles').select('role').eq('user_id', user.id);
     if (error) throw error;
     return (data ?? []).map((row) => row.role);
   },

@@ -19,10 +19,6 @@
     <loc>https://x-rare-klothing.example/contact</loc>
   </url>
   <url>
-    <loc>https://x-rare-klothing.example/products/straight-leg-denim</loc>
-    <lastmod>2026-08-14T09:27:49.637526+00:00</lastmod>
-  </url>
-  <url>
     <loc>https://x-rare-klothing.example/products/coach-jacket</loc>
     <lastmod>2026-08-14T09:27:49.792713+00:00</lastmod>
   </url>
@@ -49,6 +45,10 @@
   <url>
     <loc>https://x-rare-klothing.example/products/wool-blend-beanie</loc>
     <lastmod>2026-08-14T09:27:50.581742+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://x-rare-klothing.example/products/straight-leg-denim</loc>
+    <lastmod>2026-08-14T14:22:54.723331+00:00</lastmod>
   </url>
   <url>
     <loc>https://x-rare-klothing.example/category/men</loc>
