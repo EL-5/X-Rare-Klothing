@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens — X-RARE brand palette (brand brief: "luxurious, modern,
+ * minimal, premium, not overly colorful" — ~70% white/off-white, 25% black,
+ * 5% accent). Colors and breakpoints go in `@theme` so Tailwind generates
+ * first-class utilities (bg-ink, border-lg:, etc). Typography/spacing/radii/
+ * shadows/motion are plain custom properties instead — reference them with
+ * Tailwind's arbitrary-value syntax (`rounded-[var(--radius-button)]`) or
+ * directly in CSS/Framer Motion (see src/lib/tokens.ts for the JS-side mirror).
+ */
+@theme {
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f3ee;
+  --color-ink: #0a0a0a;
+  --color-accent: #d71920;
+  --color-border: #eaeaea;
+  --color-border-strong: #2a2a2a;
+  --color-header: #0a0a0a;
+  --color-header-foreground: #ffffff;
+  --color-footer: #0a0a0a;
+  --color-footer-foreground: #ffffff;
+  --color-success: #279a4b;
+  --color-warning: #fb9e5b;
+  --color-danger: #d71920;
+  --color-badge-sale: #d71920;
+  --color-badge-sold-out: #939393;
+
+  /* Breakpoints (confirmed live against the reference: nav flips at 1068px, not the 1024px Tailwind default) */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1068px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1440px;
+
+  --animate-marquee: marquee 18s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+:root {
+  /* Typography */
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-body: 1rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --tracking-button: 0.02em;
+
+  /* Spacing (section rhythm) */
+  --spacing-section-mobile: 50px;
+  --spacing-section-desktop: 90px;
+
+  /* Containers */
+  --container-max: 1200px;
+
+  /* Radii */
+  --radius-button: 0px;
+  --radius-badge: 4px;
+  --radius-input: 2px;
+  --radius-card: 0px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.06);
+  --shadow-drawer: -8px 0 24px rgb(0 0 0 / 0.12);
+  --shadow-popover: 0 8px 24px rgb(0 0 0 / 0.12);
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.5;
+  }
+}
