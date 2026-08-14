@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Search, Heart, User, ShoppingBag } from 'lucide-react';
 import { AnnouncementBar } from './AnnouncementBar';
@@ -9,7 +8,7 @@ import { SearchDrawer } from '@/components/search/SearchDrawer';
 import { useUIStore } from '@/stores/UIStore';
 import { useCart } from '@/stores/CartStore';
 import { useAuth } from '@/stores/AuthStore';
-import { wishlistService } from '@/services/wishlistService';
+import { useWishlist } from '@/stores/WishlistStore';
 import { ROUTES } from '@/config/routes';
 
 /**
@@ -20,22 +19,9 @@ import { ROUTES } from '@/config/routes';
 export function Header() {
   const { cartDrawer, searchDrawer, mobileNav } = useUIStore();
   const { itemCount } = useCart();
-  const { isAuthenticated, profile } = useAuth();
-  const [wishlistCount, setWishlistCount] = useState(0);
-
-  useEffect(() => {
-    if (!profile) {
-      setWishlistCount(0);
-      return;
-    }
-    let cancelled = false;
-    wishlistService.list(profile.id).then((items) => {
-      if (!cancelled) setWishlistCount(items.length);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [profile]);
+  const { isAuthenticated } = useAuth();
+  const { productIds: wishlistProductIds } = useWishlist();
+  const wishlistCount = wishlistProductIds.size;
 
   return (
     <header className="sticky top-0 z-30">

@@ -199,18 +199,25 @@ export interface InventoryLevel {
   lowStockThreshold: number;
 }
 
-export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
+
+export interface ReviewImage {
+  id: string;
+  url: string;
+  position: number;
+}
 
 export interface Review {
   id: string;
   productId: string;
   customerId: string;
-  /** Non-null when the review is linked to the order that purchased the product — powers a "Verified Purchase" badge. */
+  /** Always set server-side (see the reviews_enforce_verified_purchase trigger) — never client-supplied, so it's always a genuine "Verified Purchase". */
   orderId: string | null;
   rating: number;
   title: string | null;
   body: string | null;
   status: ReviewStatus;
+  images: ReviewImage[];
   createdAt: string;
 }
 

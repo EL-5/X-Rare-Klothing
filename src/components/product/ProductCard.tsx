@@ -1,9 +1,12 @@
-import { Link } from 'react-router-dom';
-import { Eye } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, Heart } from 'lucide-react';
 import type { Product } from '@/types/domain';
 import { ROUTES } from '@/config/routes';
 import { formatMoney } from '@/utils/money';
 import { cn } from '@/lib/cn';
+import { useAuth } from '@/stores/AuthStore';
+import { useWishlist } from '@/stores/WishlistStore';
+import { useToast } from '@/stores/ToastStore';
 
 export interface ProductCardProps {
   product: Product;
@@ -24,6 +27,23 @@ export interface ProductCardProps {
  * inline "Available in N colors" swatches all mirror the audited card.
  */
 export function ProductCard({ product, priority = false, inStock, onQuickView, className }: ProductCardProps) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { isSaved, toggle } = useWishlist();
+  const { show } = useToast();
+  const saved = isSaved(product.id);
+
+  const handleToggleWishlist = (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (!isAuthenticated) {
+      navigate(ROUTES.login);
+      return;
+    }
+    toggle(product.id).catch((err) => {
+      show({ title: 'Could not update wishlist', description: err instanceof Error ? err.message : undefined, variant: 'error' });
+    });
+  };
+
   const isSoldOut = inStock !== undefined ? !inStock : product.variants.length > 0 && product.variants.every((variant) => !variant.isActive);
   const isOnSale = product.compareAtPrice !== null && product.compareAtPrice.cents > product.price.cents;
   const savePercent = isOnSale
@@ -71,6 +91,16 @@ export function ProductCard({ product, priority = false, inStock, onQuickView, c
             Save {savePercent}%
           </span>
         ) : null}
+
+        <button
+          type="button"
+          onClick={handleToggleWishlist}
+          aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
+          aria-pressed={saved}
+          className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-surface/90 text-ink transition-opacity hover:opacity-80"
+        >
+          <Heart className={cn('h-4 w-4', saved ? 'fill-accent text-accent' : 'text-ink')} />
+        </button>
 
         {onQuickView ? (
           <button

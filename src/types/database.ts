@@ -57,7 +57,7 @@ export type PaymentStatus =
   | 'refunded'
   | 'partially_refunded';
 export type DiscountKind = 'percentage' | 'fixed_amount' | 'free_shipping';
-export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 export type ContentStatus = 'draft' | 'published' | 'archived';
 export type NewsletterSubscriberStatus = 'subscribed' | 'unsubscribed';
 

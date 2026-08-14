@@ -12,6 +12,7 @@ import type {
   ProductRow,
   ProductVariantRow,
   ProfileRow,
+  ReviewImageRow,
   ReviewRow,
   ShippingMethodRow,
   TaxRateRow,
@@ -34,6 +35,7 @@ import type {
   Product,
   ProductVariant,
   Review,
+  ReviewImage,
   ShippingRate,
   TaxRate,
   WishlistItem,
@@ -305,7 +307,11 @@ export function mapTaxRate(row: TaxRateRow): TaxRate {
   };
 }
 
-export function mapReview(row: ReviewRow): Review {
+export function mapReviewImage(row: ReviewImageRow): ReviewImage {
+  return { id: row.id, url: row.url, position: row.position };
+}
+
+export function mapReview(row: ReviewRow, images: ReviewImageRow[] = []): Review {
   return {
     id: row.id,
     productId: row.product_id,
@@ -315,6 +321,7 @@ export function mapReview(row: ReviewRow): Review {
     title: row.title,
     body: row.body,
     status: row.status,
+    images: images.filter((img) => img.review_id === row.id).map(mapReviewImage),
     createdAt: row.created_at,
   };
 }

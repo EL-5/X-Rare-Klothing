@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, Star, Trash2, X } from 'lucide-react';
+import { Check, EyeOff, Star, Trash2, X } from 'lucide-react';
 import { AdminPageHeader } from '@/components/admin/ui/AdminPageHeader';
 import { AdminSelect } from '@/components/admin/ui/AdminInput';
 import { AdminButton } from '@/components/admin/ui/AdminButton';
@@ -16,6 +16,7 @@ const STATUS_VARIANT: Record<ReviewStatus, AdminBadgeVariant> = {
   pending: 'warning',
   approved: 'success',
   rejected: 'danger',
+  hidden: 'neutral',
 };
 
 export function AdminReviews() {
@@ -70,6 +71,7 @@ export function AdminReviews() {
             { value: 'pending', label: 'Pending' },
             { value: 'approved', label: 'Approved' },
             { value: 'rejected', label: 'Rejected' },
+            { value: 'hidden', label: 'Hidden' },
             { value: '', label: 'All' },
           ]}
           className="w-40"
@@ -99,6 +101,13 @@ export function AdminReviews() {
                     </div>
                     {review.title ? <p className="mt-2 text-sm font-medium text-slate-800">{review.title}</p> : null}
                     {review.body ? <p className="mt-1 text-sm text-slate-600">{review.body}</p> : null}
+                    {review.images.length > 0 ? (
+                      <div className="mt-3 flex gap-2">
+                        {review.images.map((image) => (
+                          <img key={image.id} src={image.url} alt="" className="h-14 w-14 rounded object-cover" />
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="flex shrink-0 gap-2">
@@ -120,6 +129,16 @@ export function AdminReviews() {
                         onClick={() => handleStatusChange(review.id, 'rejected')}
                       >
                         <X className="h-4 w-4" /> Reject
+                      </AdminButton>
+                    ) : null}
+                    {review.status === 'approved' ? (
+                      <AdminButton
+                        size="sm"
+                        variant="outline"
+                        disabled={pendingId === review.id}
+                        onClick={() => handleStatusChange(review.id, 'hidden')}
+                      >
+                        <EyeOff className="h-4 w-4" /> Hide
                       </AdminButton>
                     ) : null}
                     <button
