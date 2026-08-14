@@ -1,0 +1,19 @@
+import type { ReactNode } from 'react';
+
+export interface AdminPageHeaderProps {
+  title: string;
+  description?: ReactNode;
+  actions?: ReactNode;
+}
+
+export function AdminPageHeader({ title, description, actions }: AdminPageHeaderProps) {
+  return (
+    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
+        {description ? <div className="mt-1 text-sm text-slate-500">{description}</div> : null}
+      </div>
+      {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+    </div>
+  );
+}
