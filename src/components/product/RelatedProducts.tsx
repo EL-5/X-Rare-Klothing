@@ -28,7 +28,7 @@ export function RelatedProducts({ product }: RelatedProductsProps) {
   return (
     <section className="mx-auto max-w-[var(--container-max)] px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
       <h2 className="mb-6 text-xs font-semibold uppercase tracking-wide text-ink">You Might Also Be Interested In</h2>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
         {related === null
           ? Array.from({ length: 4 }).map((_, index) => (
               <div key={index}>
