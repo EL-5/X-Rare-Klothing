@@ -1,0 +1,15 @@
+export { productService, type ProductService } from './productService';
+export { collectionService, type CollectionService } from './collectionService';
+export { cartService, type CartService } from './cartService';
+export { customerService, type CustomerService } from './customerService';
+export { orderService, type OrderService } from './orderService';
+export { paymentService, type PaymentService } from './paymentService';
+export { inventoryService, type InventoryService } from './inventoryService';
+export { searchService, type SearchService } from './searchService';
+export { discountService, type DiscountService } from './discountService';
+export { shippingService, type ShippingService } from './shippingService';
+export { reviewService, type ReviewService } from './reviewService';
+export { notificationService, type NotificationService } from './notificationService';
+export { analyticsService, type AnalyticsService } from './analyticsService';
+export { addressService, type AddressService } from './addressService';
+export { wishlistService, type WishlistService } from './wishlistService';
