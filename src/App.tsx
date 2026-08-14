@@ -12,6 +12,9 @@ import { RequireStaffRole } from '@/components/auth/RequireStaffRole';
 import { Home } from '@/pages/Home';
 import { Shop } from '@/pages/Shop';
 import { Collections } from '@/pages/Collections';
+import { About } from '@/pages/About';
+import { FAQ } from '@/pages/FAQ';
+import { Contact } from '@/pages/Contact';
 import { ProductDetail } from '@/pages/ProductDetail';
 import { SearchResults } from '@/pages/SearchResults';
 import { Checkout } from '@/pages/Checkout';
@@ -68,6 +71,9 @@ export default function App() {
             <Route path="checkout/verify" element={<CheckoutVerify />} />
             <Route path="checkout/success" element={<CheckoutSuccess />} />
             <Route path="checkout/cancel" element={<CheckoutCancel />} />
+            <Route path="about" element={<About />} />
+            <Route path="faq" element={<FAQ />} />
+            <Route path="contact" element={<Contact />} />
 
             <Route element={<RequireGuest />}>
               <Route path="login" element={<Login />} />
