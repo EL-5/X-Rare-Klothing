@@ -4,6 +4,7 @@ import type {
   CartRow,
   CollectionRow,
   DiscountRow,
+  HomepageSectionRow,
   InventoryRow,
   OrderAddressRow,
   OrderItemRow,
@@ -26,6 +27,7 @@ import type {
   Customer,
   Discount,
   DiscountAppliesTo,
+  HomepageSection,
   InventoryLevel,
   Money,
   Order,
@@ -270,6 +272,17 @@ export function appliesToToJson(appliesTo: DiscountAppliesTo): Record<string, un
   if ('productIds' in appliesTo) return { product_ids: appliesTo.productIds };
   if ('collectionIds' in appliesTo) return { collection_ids: appliesTo.collectionIds };
   return { all: true };
+}
+
+export function mapHomepageSection(row: HomepageSectionRow): HomepageSection {
+  return {
+    id: row.id,
+    type: row.type,
+    title: row.title,
+    isEnabled: row.is_enabled,
+    position: row.position,
+    config: row.config,
+  };
 }
 
 export function mapDiscount(row: DiscountRow): Discount {

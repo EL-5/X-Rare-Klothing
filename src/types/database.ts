@@ -60,6 +60,7 @@ export type DiscountKind = 'percentage' | 'fixed_amount' | 'free_shipping';
 export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 export type ContentStatus = 'draft' | 'published' | 'archived';
 export type NewsletterSubscriberStatus = 'subscribed' | 'unsubscribed';
+export type HomepageSectionType = 'hero' | 'product_carousel' | 'banner' | 'editorial' | 'category_grid' | 'newsletter';
 
 // ============================================================
 // Row shapes
@@ -464,6 +465,17 @@ export type BlogPostRow = {
   updated_at: string;
 };
 
+export type HomepageSectionRow = {
+  id: string;
+  type: HomepageSectionType;
+  title: string;
+  is_enabled: boolean;
+  position: number;
+  config: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
 export type SettingRow = {
   key: string;
   value: Record<string, unknown>;
@@ -548,6 +560,7 @@ export type Database = {
       newsletter_subscribers: Table<NewsletterSubscriberRow, 'email'>;
       pages: Table<PageRow, 'slug' | 'title'>;
       blog_posts: Table<BlogPostRow, 'slug' | 'title'>;
+      homepage_sections: Table<HomepageSectionRow, 'type' | 'title'>;
       settings: Table<SettingRow, 'key'>;
       audit_logs: Table<AuditLogRow, 'action' | 'entity_type'>;
     };

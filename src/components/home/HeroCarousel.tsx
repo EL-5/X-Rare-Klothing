@@ -1,8 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent } from 'react';
 import { Link } from 'react-router-dom';
-import type { HeroSlide } from '@/config/homepage';
 import { cn } from '@/lib/cn';
+
+export interface HeroSlide {
+  id: string;
+  eyebrow?: string;
+  heading: string;
+  subheading?: string;
+  ctaLabel: string;
+  ctaHref: string;
+  imageDesktop: string;
+  imageMobile: string;
+}
 
 export interface HeroCarouselProps {
   slides: HeroSlide[];
@@ -97,11 +107,11 @@ export function HeroCarousel({ slides, autoplayIntervalMs = 6000 }: HeroCarousel
             <h1 className="mt-3 max-w-xl text-3xl font-semibold uppercase tracking-wide lg:text-5xl">{slide.heading}</h1>
             {slide.subheading ? <p className="mt-4 max-w-md text-sm text-surface/90">{slide.subheading}</p> : null}
             <Link
-              to={slide.cta.href}
+              to={slide.ctaHref}
               tabIndex={index === activeIndex ? 0 : -1}
               className="mt-8 inline-flex h-12 items-center justify-center rounded-[var(--radius-button)] bg-surface px-8 text-sm font-medium uppercase tracking-[var(--tracking-button)] text-ink transition-colors duration-[var(--duration-base)] hover:bg-surface/90"
             >
-              {slide.cta.label}
+              {slide.ctaLabel}
             </Link>
           </div>
         </div>

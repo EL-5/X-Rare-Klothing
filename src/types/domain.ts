@@ -258,3 +258,16 @@ export interface Paginated<T> {
   pageSize: number;
   hasMore: boolean;
 }
+
+export type HomepageSectionType = 'hero' | 'product_carousel' | 'banner' | 'editorial' | 'category_grid' | 'newsletter';
+
+/** `config` shape depends on `type` — narrowed by the storefront renderer/admin form, not the type system (see docs/database.md). */
+export interface HomepageSection {
+  id: string;
+  type: HomepageSectionType;
+  /** Admin-facing label only — never shown to shoppers. */
+  title: string;
+  isEnabled: boolean;
+  position: number;
+  config: Record<string, unknown>;
+}

@@ -50,6 +50,7 @@ import { AdminCustomerDetail } from '@/pages/admin/AdminCustomerDetail';
 import { AdminDiscounts } from '@/pages/admin/AdminDiscounts';
 import { AdminReviews } from '@/pages/admin/AdminReviews';
 import { AdminContent } from '@/pages/admin/AdminContent';
+import { AdminHomepage } from '@/pages/admin/AdminHomepage';
 import { AdminAnalytics } from '@/pages/admin/AdminAnalytics';
 import { AdminSettings } from '@/pages/admin/AdminSettings';
 import { AdminUsers } from '@/pages/admin/AdminUsers';
@@ -111,6 +112,7 @@ export default function App() {
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="content" element={<AdminContent />} />
+                <Route path="homepage" element={<AdminHomepage />} />
               </Route>
 
               <Route element={<RequireStaffRole roles={['inventory_manager', 'admin', 'super_admin']} />}>

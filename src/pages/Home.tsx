@@ -1,28 +1,26 @@
-import { Hero } from '@/components/home/Hero';
-import { PromotionalBanner } from '@/components/home/PromotionalBanner';
-import { BestSellers } from '@/components/home/BestSellers';
-import { NewIn } from '@/components/home/NewIn';
-import { CategoryGrid } from '@/components/home/CategoryGrid';
-import { AccessoriesSection } from '@/components/home/AccessoriesSection';
-import { FeaturedProducts } from '@/components/home/FeaturedProducts';
-import { EditorialSection } from '@/components/home/EditorialSection';
-import { ExploreMore } from '@/components/home/ExploreMore';
-import { promotionalBanners } from '@/config/homepage';
+import { useEffect, useState } from 'react';
+import { HomeSectionRenderer } from '@/components/home/HomeSectionRenderer';
+import { homepageSectionService } from '@/services/homepageSectionService';
+import { Skeleton } from '@/components/ui/Skeleton';
+import type { HomepageSection } from '@/types/domain';
 
-/** Newsletter and Footer render globally in RootLayout, so they aren't repeated here. */
+/** Renders whatever's configured in the admin Homepage Builder, in order — see Batch 16. Footer's own Newsletter renders globally in RootLayout, so it isn't repeated here. */
 export function Home() {
+  const [sections, setSections] = useState<HomepageSection[] | null>(null);
+
+  useEffect(() => {
+    homepageSectionService.listEnabled().then(setSections);
+  }, []);
+
+  if (sections === null) {
+    return <Skeleton className="h-[500px] w-full lg:h-[680px]" />;
+  }
+
   return (
     <div>
-      <Hero />
-      <BestSellers />
-      {promotionalBanners[0] ? <PromotionalBanner banner={promotionalBanners[0]} /> : null}
-      <NewIn />
-      <CategoryGrid />
-      <AccessoriesSection />
-      {promotionalBanners[1] ? <PromotionalBanner banner={promotionalBanners[1]} /> : null}
-      <FeaturedProducts />
-      <EditorialSection />
-      <ExploreMore />
+      {sections.map((section) => (
+        <HomeSectionRenderer key={section.id} section={section} />
+      ))}
     </div>
   );
 }

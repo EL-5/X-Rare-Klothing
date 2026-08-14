@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/config/routes';
+import { settingsService } from '@/services/settingsService';
 import { Newsletter } from './Newsletter';
 import { CountrySelector } from './CountrySelector';
 
@@ -15,13 +17,24 @@ const shopLinks = [
   { label: 'Shop All', href: ROUTES.collection('all') },
 ];
 
+const DEFAULT_TAGLINE = 'Rare by design. Different by nature.';
+
 export function Footer() {
+  const [tagline, setTagline] = useState(DEFAULT_TAGLINE);
+
+  useEffect(() => {
+    settingsService.getAll().then((settings) => {
+      const value = settings.footer_tagline;
+      if (typeof value === 'string' && value.trim()) setTagline(value);
+    });
+  }, []);
+
   return (
     <footer className="bg-footer text-footer-foreground">
       <div className="mx-auto grid max-w-[var(--container-max)] gap-10 px-6 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
           <img src="/logo-white.png" alt="X-Rare" className="h-6 w-auto" />
-          <p className="mt-4 text-sm leading-relaxed text-footer-foreground/80">Rare by design. Different by nature.</p>
+          <p className="mt-4 text-sm leading-relaxed text-footer-foreground/80">{tagline}</p>
           <a
             href="https://instagram.com"
             target="_blank"

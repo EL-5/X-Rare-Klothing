@@ -256,3 +256,40 @@ insert into discounts (id, name, kind, value, applies_to, is_active) values
 
 insert into discount_codes (discount_id, code) values
   ('70000000-0000-0000-0000-000000000001', 'WELCOME10');
+
+-- ============================================================
+-- Homepage sections
+-- ============================================================
+
+insert into homepage_sections (type, title, position, config) values
+  ('hero', 'Hero', 1, '{
+    "slides": [
+      {"id": "new-season", "eyebrow": "New Season", "heading": "Rare By Design", "subheading": "Different by nature — restrained silhouettes, heavyweight fabrics, made to last.", "ctaLabel": "Shop New In", "ctaHref": "/collections/new-in", "imageDesktop": "https://picsum.photos/seed/hf-hero-1-desktop/2000/1000", "imageMobile": "https://picsum.photos/seed/hf-hero-1-mobile/900/1125"},
+      {"id": "best-sellers", "eyebrow": "Fan Favorites", "heading": "The Best Sellers", "subheading": "The pieces our customers keep coming back for.", "ctaLabel": "Shop Best Sellers", "ctaHref": "/collections/best-sellers", "imageDesktop": "https://picsum.photos/seed/hf-hero-2-desktop/2000/1000", "imageMobile": "https://picsum.photos/seed/hf-hero-2-mobile/900/1125"},
+      {"id": "summer-sale", "eyebrow": "Limited Time", "heading": "Up To 50% Off", "subheading": "Select styles, while supplies last.", "ctaLabel": "Shop The Sale", "ctaHref": "/collections/summer-sale", "imageDesktop": "https://picsum.photos/seed/hf-hero-3-desktop/2000/1000", "imageMobile": "https://picsum.photos/seed/hf-hero-3-mobile/900/1125"}
+    ]
+  }'::jsonb),
+  ('product_carousel', 'Best Sellers', 2, '{"heading": "Best Sellers", "viewAllHref": "/collections/best-sellers", "source": "collection", "collectionSlug": "best-sellers"}'::jsonb),
+  ('banner', 'New Releases Banner', 3, '{"heading": "New Releases", "ctaLabel": "Explore Now", "ctaHref": "/collections/new-in", "image": "https://picsum.photos/seed/hf-promo-releases/1400/900"}'::jsonb),
+  ('product_carousel', 'New In', 4, '{"heading": "New In", "viewAllHref": "/collections/new-in", "source": "collection", "collectionSlug": "new-in"}'::jsonb),
+  ('category_grid', 'Shop By Category', 5, '{}'::jsonb),
+  ('product_carousel', 'Accessories', 6, '{"heading": "Accessories", "viewAllHref": "/category/accessories", "source": "category", "categorySlug": "accessories"}'::jsonb),
+  ('banner', 'Tracksuits Banner', 7, '{"heading": "Tracksuits", "ctaLabel": "Explore Now", "ctaHref": "/shop", "image": "https://picsum.photos/seed/hf-promo-tracksuits/1400/900"}'::jsonb),
+  ('product_carousel', 'Featured Products', 8, '{"heading": "More Featured Products", "viewAllHref": "/collections/featured", "source": "collection", "collectionSlug": "featured"}'::jsonb),
+  ('editorial', 'Brand Statement', 9, '{"label": "Our Story", "repeatedText": "X-RARE", "body": "Built for the person who does not want to look, think, or move like everybody else. Every collection represents identity, confidence, and individuality."}'::jsonb),
+  ('product_carousel', 'Explore More', 10, '{"heading": "Explore More", "viewAllHref": "/shop", "source": "newest"}'::jsonb);
+
+-- ============================================================
+-- Site settings
+-- ============================================================
+
+insert into settings (key, value) values
+  ('store_name', '{"value": "X-Rare"}'::jsonb),
+  ('support_email', '{"value": ""}'::jsonb),
+  ('currency', '{"value": "USD"}'::jsonb),
+  ('order_prefix', '{"value": "XR"}'::jsonb),
+  ('low_stock_default_threshold', '{"value": "5"}'::jsonb),
+  ('free_shipping_threshold_cents', '{"value": "15000"}'::jsonb),
+  ('announcement_enabled', '{"value": true}'::jsonb),
+  ('announcement_message', '{"value": "Free shipping on orders over $200"}'::jsonb),
+  ('footer_tagline', '{"value": "Rare by design. Different by nature."}'::jsonb);

@@ -15,6 +15,9 @@ interface SettingsForm {
   order_prefix: string;
   low_stock_default_threshold: string;
   free_shipping_threshold_cents: string;
+  announcement_enabled: boolean;
+  announcement_message: string;
+  footer_tagline: string;
 }
 
 const DEFAULTS: SettingsForm = {
@@ -24,6 +27,9 @@ const DEFAULTS: SettingsForm = {
   order_prefix: 'XR',
   low_stock_default_threshold: '5',
   free_shipping_threshold_cents: '15000',
+  announcement_enabled: true,
+  announcement_message: 'Free shipping on orders over $200',
+  footer_tagline: 'Rare by design. Different by nature.',
 };
 
 export function AdminSettings() {
@@ -40,6 +46,9 @@ export function AdminSettings() {
         order_prefix: String(values.order_prefix ?? DEFAULTS.order_prefix),
         low_stock_default_threshold: String(values.low_stock_default_threshold ?? DEFAULTS.low_stock_default_threshold),
         free_shipping_threshold_cents: String(values.free_shipping_threshold_cents ?? DEFAULTS.free_shipping_threshold_cents),
+        announcement_enabled: typeof values.announcement_enabled === 'boolean' ? values.announcement_enabled : DEFAULTS.announcement_enabled,
+        announcement_message: String(values.announcement_message ?? DEFAULTS.announcement_message),
+        footer_tagline: String(values.footer_tagline ?? DEFAULTS.footer_tagline),
       });
     });
   }, []);
@@ -104,6 +113,34 @@ export function AdminSettings() {
               type="number"
               value={form.free_shipping_threshold_cents}
               onChange={(e) => setForm({ ...form, free_shipping_threshold_cents: e.target.value })}
+            />
+          </AdminCardBody>
+        </AdminCard>
+
+        <AdminCard className="mt-6">
+          <AdminCardHeader>
+            <h2 className="text-sm font-semibold text-slate-900">Storefront content</h2>
+          </AdminCardHeader>
+          <AdminCardBody className="grid gap-4 sm:grid-cols-2">
+            <label className="flex items-center gap-2 text-sm text-slate-700 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={form.announcement_enabled}
+                onChange={(e) => setForm({ ...form, announcement_enabled: e.target.checked })}
+              />
+              Show announcement bar
+            </label>
+            <AdminInput
+              label="Announcement message"
+              containerClassName="sm:col-span-2"
+              value={form.announcement_message}
+              onChange={(e) => setForm({ ...form, announcement_message: e.target.value })}
+            />
+            <AdminInput
+              label="Footer tagline"
+              containerClassName="sm:col-span-2"
+              value={form.footer_tagline}
+              onChange={(e) => setForm({ ...form, footer_tagline: e.target.value })}
             />
           </AdminCardBody>
         </AdminCard>

@@ -174,7 +174,15 @@ export const productRepository = {
 
       if (categoryError) throw categoryError;
       if (!category) return { items: [], total: 0, page, pageSize, hasMore: false };
-      query = query.eq('category_id', category.id);
+
+      // Products are tagged to leaf categories (e.g. "Accessories > Bags"),
+      // never the parent — browsing the parent ("Accessories") needs to
+      // include every child's products too, not just ones tagged directly
+      // to the parent (which is always empty by design).
+      const { data: children, error: childrenError } = await supabase.from('categories').select('id').eq('parent_id', category.id);
+      if (childrenError) throw childrenError;
+      const categoryIds = [category.id, ...(children ?? []).map((c) => c.id)];
+      query = query.in('category_id', categoryIds);
     }
 
     switch (params.sortBy) {

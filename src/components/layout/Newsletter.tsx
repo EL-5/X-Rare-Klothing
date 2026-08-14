@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/stores/ToastStore';
+import { newsletterRepository } from '@/repositories/newsletterRepository';
 
 export interface NewsletterProps {
   heading?: string;
@@ -23,11 +24,12 @@ export function Newsletter({
     event.preventDefault();
     setIsSubmitting(true);
     try {
-      // TODO: wire to NotificationService / marketing-list integration.
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      await newsletterRepository.subscribe(email, name.trim() || undefined);
       show({ title: 'You’re on the list', description: 'Check your inbox for your discount code.', variant: 'success' });
       setName('');
       setEmail('');
+    } catch (err) {
+      show({ title: 'Could not sign you up', description: err instanceof Error ? err.message : undefined, variant: 'error' });
     } finally {
       setIsSubmitting(false);
     }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Search, Heart, User, ShoppingBag } from 'lucide-react';
 import { AnnouncementBar } from './AnnouncementBar';
@@ -9,6 +10,7 @@ import { useUIStore } from '@/stores/UIStore';
 import { useCart } from '@/stores/CartStore';
 import { useAuth } from '@/stores/AuthStore';
 import { useWishlist } from '@/stores/WishlistStore';
+import { settingsService } from '@/services/settingsService';
 import { ROUTES } from '@/config/routes';
 
 /**
@@ -22,10 +24,19 @@ export function Header() {
   const { isAuthenticated } = useAuth();
   const { productIds: wishlistProductIds } = useWishlist();
   const wishlistCount = wishlistProductIds.size;
+  const [announcement, setAnnouncement] = useState<string | null>(null);
+
+  useEffect(() => {
+    settingsService.getAll().then((settings) => {
+      const enabled = settings.announcement_enabled;
+      const message = settings.announcement_message;
+      if (enabled !== false && typeof message === 'string' && message.trim()) setAnnouncement(message);
+    });
+  }, []);
 
   return (
     <header className="sticky top-0 z-30">
-      <AnnouncementBar message="Free shipping on orders over $200" />
+      {announcement ? <AnnouncementBar message={announcement} /> : null}
 
       <div className="bg-header text-header-foreground">
         <div className="mx-auto flex h-[72px] max-w-[var(--container-max)] items-center justify-between px-6 lg:px-8">
