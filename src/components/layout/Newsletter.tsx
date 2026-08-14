@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/stores/ToastStore';
 import { newsletterRepository } from '@/repositories/newsletterRepository';
+import { analyticsService } from '@/services/analyticsService';
 
 export interface NewsletterProps {
   heading?: string;
@@ -25,6 +26,7 @@ export function Newsletter({
     setIsSubmitting(true);
     try {
       await newsletterRepository.subscribe(email, name.trim() || undefined);
+      void analyticsService.trackNewsletterSignup();
       show({ title: 'You’re on the list', description: 'Check your inbox for your discount code.', variant: 'success' });
       setName('');
       setEmail('');

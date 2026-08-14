@@ -30,10 +30,27 @@ export interface DashboardData {
   topProducts: TopEntry[];
   topCategories: TopEntry[];
   ordersByStatus: TopEntry[];
+  funnel: TopEntry[];
+  customerGrowthSeries: ChartPoint[];
 }
 
 /** Order statuses counted as recognized revenue — excludes not-yet-paid and cancelled/refunded orders. */
 const REVENUE_STATUSES = new Set(['paid', 'processing', 'ready_for_shipping', 'shipped', 'delivered']);
+
+/**
+ * Funnel stage order matches the tracking calls wired into the storefront
+ * (see analyticsService): each stage counts *distinct sessions* that fired
+ * that event in range, not raw event counts, so a session bouncing between
+ * products doesn't inflate "Product view" relative to "Page view".
+ */
+const FUNNEL_STAGES: { type: string; label: string }[] = [
+  { type: 'page_view', label: 'Page view' },
+  { type: 'product_view', label: 'Product view' },
+  { type: 'add_to_cart', label: 'Add to cart' },
+  { type: 'checkout_started', label: 'Checkout started' },
+  { type: 'payment_started', label: 'Payment started' },
+  { type: 'purchase', label: 'Purchase' },
+];
 
 function dayKey(iso: string): string {
   return iso.slice(0, 10);
@@ -48,12 +65,14 @@ class SupabaseDashboardService implements DashboardService {
     const startISO = startDate.toISOString();
     const endISO = endDate.toISOString();
 
-    const [orders, newCustomers, pendingOrders, pendingPayments, stockCounts] = await Promise.all([
+    const [orders, newCustomers, pendingOrders, pendingPayments, stockCounts, funnelEvents, newCustomerRows] = await Promise.all([
       dashboardRepository.getOrdersInRange(startISO, endISO),
       dashboardRepository.countNewCustomersInRange(startISO, endISO),
       dashboardRepository.countPendingOrders(),
       dashboardRepository.countPendingPayments(),
       dashboardRepository.getStockCounts(),
+      dashboardRepository.getFunnelEventsInRange(startISO, endISO),
+      dashboardRepository.getNewCustomersCreatedAtInRange(startISO, endISO),
     ]);
 
     const revenueOrders = orders.filter((o) => REVENUE_STATUSES.has(o.status));
@@ -120,6 +139,24 @@ class SupabaseDashboardService implements DashboardService {
       .sort((a, b) => b[1] - a[1])
       .map(([name, value]) => ({ name: name.replace('_', ' '), value }));
 
+    const sessionsByType = new Map<string, Set<string>>();
+    for (const event of funnelEvents) {
+      const set = sessionsByType.get(event.type) ?? new Set<string>();
+      set.add(event.session_id);
+      sessionsByType.set(event.type, set);
+    }
+    const funnel: TopEntry[] = FUNNEL_STAGES.map((stage) => ({
+      name: stage.label,
+      value: sessionsByType.get(stage.type)?.size ?? 0,
+    }));
+
+    const customersByDay = new Map<string, number>();
+    for (const row of newCustomerRows) {
+      const key = dayKey(row.created_at);
+      customersByDay.set(key, (customersByDay.get(key) ?? 0) + 1);
+    }
+    const customerGrowthSeries: ChartPoint[] = days.map((d) => ({ label: d, value: customersByDay.get(d) ?? 0 }));
+
     return {
       metrics: {
         revenue: { cents: revenueCents, currency },
@@ -137,6 +174,8 @@ class SupabaseDashboardService implements DashboardService {
       topProducts,
       topCategories,
       ordersByStatus,
+      funnel,
+      customerGrowthSeries,
     };
   }
 }

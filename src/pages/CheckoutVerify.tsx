@@ -4,6 +4,7 @@ import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { buttonClassNames } from '@/components/ui/Button';
 import { useCart } from '@/stores/CartStore';
 import { paymentService } from '@/services/paymentService';
+import { analyticsService } from '@/services/analyticsService';
 import { ROUTES } from '@/config/routes';
 
 type VerifyState = 'polling' | 'paid' | 'not_paid' | 'timeout';
@@ -35,6 +36,7 @@ export function CheckoutVerify() {
         if (status === 'paid') {
           setState('paid');
           void refreshCart();
+          void analyticsService.trackPurchase(orderId, 0);
         } else if (status === 'pending' || status === 'cancelled') {
           setState('not_paid');
         } else {

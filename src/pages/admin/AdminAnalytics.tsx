@@ -56,6 +56,26 @@ export function AdminAnalytics() {
           <div className="grid gap-6 lg:grid-cols-2">
             <AdminCard>
               <AdminCardHeader>
+                <h2 className="text-sm font-semibold text-slate-900">Conversion funnel</h2>
+                <p className="text-xs text-slate-500">Distinct sessions reaching each stage in range.</p>
+              </AdminCardHeader>
+              <AdminCardBody>
+                <BarChart data={data.funnel} color="#7C3AED" />
+              </AdminCardBody>
+            </AdminCard>
+
+            <AdminCard>
+              <AdminCardHeader>
+                <h2 className="text-sm font-semibold text-slate-900">Customer growth</h2>
+                <p className="text-xs text-slate-500">New accounts created per day.</p>
+              </AdminCardHeader>
+              <AdminCardBody>
+                <LineChart data={data.customerGrowthSeries} />
+              </AdminCardBody>
+            </AdminCard>
+
+            <AdminCard>
+              <AdminCardHeader>
                 <h2 className="text-sm font-semibold text-slate-900">Top 10 products by revenue</h2>
               </AdminCardHeader>
               <AdminCardBody>

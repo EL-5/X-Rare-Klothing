@@ -15,6 +15,7 @@ import { NotFound } from '@/pages/NotFound';
 import { useVariantSelection } from '@/hooks/useVariantSelection';
 import { productService } from '@/services/productService';
 import { inventoryService } from '@/services/inventoryService';
+import { analyticsService } from '@/services/analyticsService';
 import { ROUTES } from '@/config/routes';
 import type { InventoryLevel, Product } from '@/types/domain';
 
@@ -37,6 +38,7 @@ export function ProductDetail() {
         const variantIds = result.variants.map((v) => v.id);
         const levels = await inventoryService.getAvailabilityForVariants(variantIds);
         if (!cancelled) setInventoryByVariant(new Map(levels.map((l) => [l.variantId, l])));
+        void analyticsService.trackProductView(result.id);
       }
     });
     return () => {

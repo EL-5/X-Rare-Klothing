@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { wishlistService } from '@/services/wishlistService';
+import { analyticsService } from '@/services/analyticsService';
 import { useAuth } from '@/stores/AuthStore';
 
 interface WishlistStoreValue {
@@ -56,6 +57,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       } else {
         const created = await wishlistService.add(profileId, productId);
         setItemIdByProduct((prev) => new Map(prev).set(productId, created.id));
+        void analyticsService.trackWishlistAdd(productId);
       }
     },
     [profileId, itemIdByProduct],

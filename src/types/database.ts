@@ -72,6 +72,17 @@ export type NotificationType =
   | 'refund'
   | 'newsletter';
 export type NotificationStatus = 'pending' | 'sent' | 'failed';
+export type AnalyticsEventType =
+  | 'page_view'
+  | 'product_view'
+  | 'search'
+  | 'add_to_cart'
+  | 'remove_from_cart'
+  | 'checkout_started'
+  | 'payment_started'
+  | 'purchase'
+  | 'wishlist'
+  | 'newsletter_signup';
 
 // ============================================================
 // Row shapes
@@ -504,6 +515,15 @@ export type NotificationRow = {
   updated_at: string;
 };
 
+export type AnalyticsEventRow = {
+  id: string;
+  type: AnalyticsEventType;
+  session_id: string;
+  profile_id: string | null;
+  data: Record<string, unknown>;
+  created_at: string;
+};
+
 export type SettingRow = {
   key: string;
   value: Record<string, unknown>;
@@ -590,6 +610,7 @@ export type Database = {
       blog_posts: Table<BlogPostRow, 'slug' | 'title'>;
       homepage_sections: Table<HomepageSectionRow, 'type' | 'title'>;
       notifications: Table<NotificationRow, 'type' | 'recipient_email'>;
+      analytics_events: Table<AnalyticsEventRow, 'type' | 'session_id'>;
       settings: Table<SettingRow, 'key'>;
       audit_logs: Table<AuditLogRow, 'action' | 'entity_type'>;
     };

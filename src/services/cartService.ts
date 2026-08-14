@@ -5,6 +5,7 @@ import { addressService } from '@/services/addressService';
 import { discountService } from '@/services/discountService';
 import { shippingService } from '@/services/shippingService';
 import { taxService } from '@/services/taxService';
+import { analyticsService } from '@/services/analyticsService';
 import type { Cart, Money } from '@/types/domain';
 
 const CART_ID_STORAGE_KEY = 'hf.cartId';
@@ -118,6 +119,7 @@ class SupabaseCartService implements CartService {
     }
 
     const updated = await cartRepository.addItem(cart.id, variantId, quantity);
+    void analyticsService.trackAddToCart(variantId, quantity);
     return this.enrich(updated, profileId);
   }
 
@@ -140,7 +142,9 @@ class SupabaseCartService implements CartService {
 
   async removeItem(profileId: string | null, itemId: string): Promise<Cart> {
     const cart = await this.getCart(profileId);
+    const removedItem = cart.items.find((item) => item.id === itemId);
     const updated = await cartRepository.removeItem(cart.id, itemId);
+    if (removedItem) void analyticsService.trackRemoveFromCart(removedItem.variantId);
     return this.enrich(updated, profileId);
   }
 

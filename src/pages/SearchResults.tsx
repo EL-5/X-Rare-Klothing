@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useRecentSearches } from '@/hooks/useRecentSearches';
 import { searchService } from '@/services/searchService';
+import { analyticsService } from '@/services/analyticsService';
 import type { Product, SearchResult } from '@/types/domain';
 
 const PAGE_SIZE = 24;
@@ -56,6 +57,7 @@ export function SearchResults() {
       if (cancelled) return;
       setResult(data);
       record(query);
+      void analyticsService.trackSearch(query, data.total);
     });
     return () => {
       cancelled = true;

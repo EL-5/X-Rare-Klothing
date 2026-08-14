@@ -1,9 +1,19 @@
-import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/stores/CartStore';
 import { WishlistProvider } from '@/stores/WishlistStore';
 import { UIProvider } from '@/stores/UIStore';
+import { analyticsService } from '@/services/analyticsService';
+
+function PageViewTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    void analyticsService.trackPageView(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+  return null;
+}
 
 /** Storefront chrome — header/footer/cart/wishlist. Not used by /admin, which has its own minimal layout. */
 export function RootLayout() {
@@ -12,6 +22,7 @@ export function RootLayout() {
       <WishlistProvider>
         <UIProvider>
           <div className="flex min-h-screen flex-col">
+            <PageViewTracker />
             <Header />
             <main className="flex-1">
               <Outlet />

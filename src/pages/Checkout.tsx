@@ -14,6 +14,7 @@ import { shippingService } from '@/services/shippingService';
 import { taxService } from '@/services/taxService';
 import { checkoutService } from '@/services/checkoutService';
 import { paymentService } from '@/services/paymentService';
+import { analyticsService } from '@/services/analyticsService';
 import { ROUTES } from '@/config/routes';
 import { formatMoney } from '@/utils/money';
 import type { Address, Money, ShippingRate } from '@/types/domain';
@@ -104,6 +105,14 @@ export function Checkout() {
   useEffect(() => {
     if (profile?.email) setEmail(profile.email);
   }, [profile]);
+
+  useEffect(() => {
+    if (cart && cart.items.length > 0) {
+      void analyticsService.trackCheckoutStarted(cart.total.cents);
+    }
+    // Only fires once per cart the checkout page is opened with, not on every recalculation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart?.id]);
 
   useEffect(() => {
     if (!profile) {
@@ -267,6 +276,8 @@ export function Checkout() {
         }
       }
 
+      void analyticsService.trackPaymentStarted(order.id);
+
       if (paymentMethod !== 'card') {
         // Real Paystack/Flutterwave path: initialize-payment (Edge Function)
         // records the payment attempt and returns a provider-hosted checkout
@@ -287,6 +298,7 @@ export function Checkout() {
         return;
       }
 
+      void analyticsService.trackPurchase(order.id, order.totalCents);
       await refreshCart();
       navigate(ROUTES.checkoutSuccess, {
         state: { orderNumber: order.number, totalCents: order.totalCents, currency: order.currency, email: email.trim() },

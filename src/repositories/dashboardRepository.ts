@@ -96,6 +96,27 @@ export const dashboardRepository = {
     return count ?? 0;
   },
 
+  async getFunnelEventsInRange(startISO: string, endISO: string): Promise<{ type: string; session_id: string }[]> {
+    const { data, error } = await supabase
+      .from('analytics_events')
+      .select('type, session_id')
+      .in('type', ['page_view', 'product_view', 'add_to_cart', 'checkout_started', 'payment_started', 'purchase'])
+      .gte('created_at', startISO)
+      .lte('created_at', endISO);
+    if (error) throw error;
+    return data ?? [];
+  },
+
+  async getNewCustomersCreatedAtInRange(startISO: string, endISO: string): Promise<{ created_at: string }[]> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('created_at')
+      .gte('created_at', startISO)
+      .lte('created_at', endISO);
+    if (error) throw error;
+    return data ?? [];
+  },
+
   async getStockCounts(): Promise<{ lowStock: number; outOfStock: number }> {
     const { data, error } = await supabase.from('inventory').select('available, low_stock_threshold');
     if (error) throw error;
