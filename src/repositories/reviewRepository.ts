@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type { Review, ReviewStatus } from '@/types/domain';
 import { mapReview } from './mappers';
+import { assertValidImageFile } from '@/utils/fileValidation';
 
 const IMAGE_BUCKET = 'review-images';
 
@@ -79,6 +80,7 @@ export const reviewRepository = {
   },
 
   async uploadImage(reviewId: string, file: File): Promise<void> {
+    assertValidImageFile(file);
     const path = `${reviewId}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const { error: uploadError } = await supabase.storage.from(IMAGE_BUCKET).upload(path, file, { cacheControl: '3600', upsert: false });
     if (uploadError) throw uploadError;

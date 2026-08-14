@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { assertValidImageFile } from '@/utils/fileValidation';
 
 const BUCKET = 'product-images';
 
@@ -32,6 +33,7 @@ export const productImageRepository = {
 
   /** Uploads to Supabase Storage, then creates the `product_images` row pointing at the public URL. New images append to the end (highest position). */
   async upload(productId: string, file: File): Promise<ProductImage> {
+    assertValidImageFile(file);
     const path = `${productId}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file, {
       cacheControl: '3600',
