@@ -29,6 +29,7 @@ export interface ProductListingFacets {
 }
 
 const PAGE_SIZE = 8;
+const RAW_FETCH_SIZE = 1000;
 
 function parseList(value: string | null): string[] {
   return value ? value.split(',').filter(Boolean) : [];
@@ -36,12 +37,19 @@ function parseList(value: string | null): string[] {
 
 /**
  * Backs /shop, /collections/:slug, and /category/:slug. Fetches the raw
- * scoped catalog once (large page size — the store is small enough that
- * server-side price/size/color faceting isn't worth the query complexity
- * yet, see docs/database.md's client-side-aggregation precedent), then
- * applies availability/price/size/color filtering, sorting, and "Load more"
+ * scoped catalog once (large page size — server-side price/size/color
+ * faceting isn't worth the query complexity yet at this catalog size, see
+ * docs/database.md's client-side-aggregation precedent), then applies
+ * availability/price/size/color filtering, sorting, and "Load more"
  * pagination client-side. Filters and sort are mirrored in the URL so a
  * refresh reproduces the same view.
+ *
+ * RAW_FETCH_SIZE must stay comfortably above the catalog's real product
+ * count (see docs/catalog-report.md) — an unscoped /shop fetch is the
+ * catalog's full active count, and silently truncating it here would mean
+ * "Load more" runs out early with products that still exist in the
+ * database. Once the catalog meaningfully exceeds this, the fix is real
+ * server-side faceting, not another bump.
  */
 export function useProductListing(scope: ProductListingScope) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,7 +80,7 @@ export function useProductListing(scope: ProductListingScope) {
     setFeaturedPositions(effectiveCollectionSlug ? null : new Map());
 
     productService
-      .list({ collectionSlug: effectiveCollectionSlug, categorySlug: effectiveCategorySlug, brandSlug: scope.brandSlug, pageSize: 200 })
+      .list({ collectionSlug: effectiveCollectionSlug, categorySlug: effectiveCategorySlug, brandSlug: scope.brandSlug, pageSize: RAW_FETCH_SIZE })
       .then(async (result) => {
       if (cancelled) return;
       setRawProducts(result.items);

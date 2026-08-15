@@ -10,6 +10,31 @@ export interface InventoryLevelWithVariant extends InventoryLevel {
   sold: number;
 }
 
+/**
+ * Runs an `.in()`-filtered query in chunks of ids and merges the results.
+ * An `.in()` filter is serialized into the request's query string, and a
+ * large unscoped product listing can easily carry thousands of variant
+ * ids — well past what a single request's URL length can hold (a real 400
+ * seen once the catalog passed a few hundred products). 300 ids per chunk
+ * keeps every request's filter comfortably under typical URL length limits.
+ */
+async function chunkedIn<T>(
+  ids: string[],
+  query: (chunk: string[]) => PromiseLike<{ data: T[] | null; error: unknown }>,
+): Promise<T[]> {
+  const CHUNK_SIZE = 300;
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += CHUNK_SIZE) chunks.push(ids.slice(i, i + CHUNK_SIZE));
+  const results = await Promise.all(
+    chunks.map(async (chunk) => {
+      const { data, error } = await query(chunk);
+      if (error) throw error;
+      return data ?? [];
+    }),
+  );
+  return results.flat();
+}
+
 async function recordMovement(
   variantId: string,
   type: InventoryMovementType,
@@ -45,9 +70,8 @@ export const inventoryRepository = {
 
   async getByVariantIds(variantIds: string[]): Promise<InventoryLevel[]> {
     if (variantIds.length === 0) return [];
-    const { data, error } = await supabase.from('inventory').select('*').in('variant_id', variantIds);
-    if (error) throw error;
-    return (data ?? []).map(mapInventoryLevel);
+    const rows = await chunkedIn(variantIds, (chunk) => supabase.from('inventory').select('*').in('variant_id', chunk));
+    return rows.map(mapInventoryLevel);
   },
 
   /** Admin inventory table view: every variant with its current stock level. */
@@ -60,13 +84,11 @@ export const inventoryRepository = {
     if (!inventoryRows || inventoryRows.length === 0) return [];
 
     const variantIds = inventoryRows.map((row) => row.variant_id);
-    const { data: variantRows, error: variantsError } = await supabase
-      .from('product_variants')
-      .select('id, sku, product_id')
-      .in('id', variantIds);
-    if (variantsError) throw variantsError;
+    const variantRows = await chunkedIn(variantIds, (chunk) =>
+      supabase.from('product_variants').select('id, sku, product_id').in('id', chunk),
+    );
 
-    const productIds = [...new Set((variantRows ?? []).map((v) => v.product_id))];
+    const productIds = [...new Set(variantRows.map((v) => v.product_id))];
     const { data: productRows, error: productsError } = await supabase
       .from('products')
       .select('id, name')
@@ -74,17 +96,14 @@ export const inventoryRepository = {
     if (productsError) throw productsError;
 
     const productById = new Map(productRows?.map((p) => [p.id, p.name]));
-    const variantById = new Map(variantRows?.map((v) => [v.id, v]));
+    const variantById = new Map(variantRows.map((v) => [v.id, v]));
 
-    const { data: saleMovements, error: salesError } = await supabase
-      .from('inventory_movements')
-      .select('variant_id, quantity')
-      .eq('type', 'sale')
-      .in('variant_id', variantIds);
-    if (salesError) throw salesError;
+    const saleMovements = await chunkedIn(variantIds, (chunk) =>
+      supabase.from('inventory_movements').select('variant_id, quantity').eq('type', 'sale').in('variant_id', chunk),
+    );
 
     const soldByVariant = new Map<string, number>();
-    for (const movement of saleMovements ?? []) {
+    for (const movement of saleMovements) {
       soldByVariant.set(movement.variant_id, (soldByVariant.get(movement.variant_id) ?? 0) + Math.abs(movement.quantity));
     }
 

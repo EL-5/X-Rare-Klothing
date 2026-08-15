@@ -75,6 +75,23 @@ function variantInputToRow(input: Partial<VariantFormInput>): Partial<ProductVar
   return row;
 }
 
+/**
+ * Splits productIds into fixed-size chunks. Both variants_by_products and a
+ * plain product_images select are subject to Supabase's platform-level
+ * db-max-rows cap (1000 on this project) — for an unscoped catalog fetch
+ * across hundreds of products with many variants/images each, a single
+ * request can silently come back truncated (still a 200, just missing
+ * rows) rather than erroring, which is worse than a chunk-size guess being
+ * slightly conservative. 20 products per chunk keeps even the
+ * highest-variant-count products (up to ~36 variants) safely under 1000
+ * rows per request.
+ */
+function chunkIds(ids: string[], size = 20): string[][] {
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += size) chunks.push(ids.slice(i, i + size));
+  return chunks;
+}
+
 // Reads go through the variants_by_products/variants_by_ids RPCs, not the
 // base table: cost_cents/barcode (wholesale cost / internal barcode) come
 // back real for staff and null for everyone else, decided inside the
@@ -86,12 +103,16 @@ function variantInputToRow(input: Partial<VariantFormInput>): Partial<ProductVar
 async function fetchVariants(productIds: string[]): Promise<Map<string, ProductVariantRow[]>> {
   if (productIds.length === 0) return new Map();
 
-  const { data, error } = await supabase.rpc('variants_by_products', { _product_ids: productIds });
-
-  if (error) throw error;
+  const chunks = await Promise.all(
+    chunkIds(productIds).map(async (chunk) => {
+      const { data, error } = await supabase.rpc('variants_by_products', { _product_ids: chunk });
+      if (error) throw error;
+      return data ?? [];
+    }),
+  );
 
   const byProduct = new Map<string, ProductVariantRow[]>();
-  for (const row of data ?? []) {
+  for (const row of chunks.flat()) {
     const existing = byProduct.get(row.product_id) ?? [];
     existing.push(row);
     byProduct.set(row.product_id, existing);
@@ -102,16 +123,20 @@ async function fetchVariants(productIds: string[]): Promise<Map<string, ProductV
 async function fetchImages(productIds: string[]): Promise<Map<string, ProductImageRow[]>> {
   if (productIds.length === 0) return new Map();
 
-  const { data, error } = await supabase
-    .from('product_images')
-    .select('product_id, variant_id, url')
-    .in('product_id', productIds)
-    .order('position');
-
-  if (error) throw error;
+  const chunks = await Promise.all(
+    chunkIds(productIds).map(async (chunk) => {
+      const { data, error } = await supabase
+        .from('product_images')
+        .select('product_id, variant_id, url')
+        .in('product_id', chunk)
+        .order('position');
+      if (error) throw error;
+      return data ?? [];
+    }),
+  );
 
   const byProduct = new Map<string, ProductImageRow[]>();
-  for (const row of data ?? []) {
+  for (const row of chunks.flat()) {
     const existing = byProduct.get(row.product_id) ?? [];
     existing.push({ url: row.url, variantId: row.variant_id });
     byProduct.set(row.product_id, existing);
