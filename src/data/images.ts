@@ -77,7 +77,17 @@ export const bannerImages = {
 } satisfies Record<string, CatalogImage>;
 
 export const editorialImages = {
-  aboutHero: { id: '1676439777386-d67cd2b32e7b', alt: 'Black and white portrait for the X-Rare brand story' },
-  aboutSecondary: { id: '1548207775-a7676e36f20a', alt: 'Monochrome editorial portrait, X-Rare brand story' },
   contactBanner: { id: '1441984904996-e0b6ba687e04', alt: 'Minimal clothing boutique interior with hanging racks' },
+} satisfies Record<string, CatalogImage>;
+
+/** About page — premium fashion-editorial redesign. One entry per section that needs a photo. */
+export const aboutImages = {
+  hero: { id: '1785741833876-8db063dd8654', alt: 'Confident model in editorial streetwear, X-Rare campaign' },
+  storyChapterOne: { id: '1668952135120-7d997b1b3778', alt: 'Model in a long coat against a plain backdrop — editorial portrait' },
+  storyChapterTwo: { id: '1659522761084-79196b64abe4', alt: 'Model in a white dress, minimal elegant styling' },
+  storyChapterThree: { id: '1785414671221-0c3353f9f417', alt: 'Stylish model seated on a rooftop, editorial fashion look' },
+  globalVision: { id: '1531123897727-8f129e1688ce', alt: 'Confident African fashion editorial portrait' },
+  customerOne: { id: '1786482126555-c37b4aba91c8', alt: 'Confident model in a blazer holding sunglasses on a city street' },
+  customerTwo: { id: '1780396508935-94e234affc92', alt: 'Model in a navy tracksuit, confident street style pose' },
+  finalCta: { id: '1580478491436-fd6a937acc9e', alt: 'Model in a red blazer seated on stairs, dramatic editorial campaign' },
 } satisfies Record<string, CatalogImage>;
