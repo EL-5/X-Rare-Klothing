@@ -44,7 +44,7 @@ export function Header() {
             type="button"
             onClick={mobileNav.open}
             aria-label="Open menu"
-            className="text-header-foreground lg:hidden"
+            className="-m-2.5 p-2.5 text-header-foreground lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -61,7 +61,7 @@ export function Header() {
               type="button"
               onClick={searchDrawer.open}
               aria-label="Search"
-              className="text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80"
+              className="-m-2.5 p-2.5 text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80"
             >
               <Search className="h-5 w-5" />
             </button>
@@ -69,11 +69,11 @@ export function Header() {
             <Link
               to={ROUTES.accountWishlist}
               aria-label={`Wishlist, ${wishlistCount} item${wishlistCount === 1 ? '' : 's'}`}
-              className="relative hidden text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80 sm:inline-flex"
+              className="relative -m-2.5 hidden p-2.5 text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80 sm:inline-flex"
             >
               <Heart className="h-5 w-5" />
               {wishlistCount > 0 ? (
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
+                <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
                   {wishlistCount}
                 </span>
               ) : null}
@@ -82,7 +82,7 @@ export function Header() {
             <Link
               to={isAuthenticated ? ROUTES.account : ROUTES.login}
               aria-label={isAuthenticated ? 'Account' : 'Log in'}
-              className="hidden text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80 sm:inline-flex"
+              className="-m-2.5 hidden p-2.5 text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80 sm:inline-flex"
             >
               <User className="h-5 w-5" />
             </Link>
@@ -91,11 +91,11 @@ export function Header() {
               type="button"
               onClick={cartDrawer.open}
               aria-label={`Cart, ${itemCount} item${itemCount === 1 ? '' : 's'}`}
-              className="relative text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80"
+              className="relative -m-2.5 p-2.5 text-header-foreground transition-opacity duration-[var(--duration-base)] hover:opacity-80"
             >
               <ShoppingBag className="h-5 w-5" />
               {itemCount > 0 ? (
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
+                <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
                   {itemCount}
                 </span>
               ) : null}

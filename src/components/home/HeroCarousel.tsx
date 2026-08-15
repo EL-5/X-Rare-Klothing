@@ -78,7 +78,7 @@ export function HeroCarousel({ slides, autoplayIntervalMs = 6000 }: HeroCarousel
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
-      className="relative h-[500px] w-full touch-pan-y select-none overflow-hidden bg-surface-muted outline-none lg:h-[680px]"
+      className="relative h-[500px] w-full touch-pan-y select-none overflow-hidden bg-surface-muted outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:h-[680px]"
     >
       {slides.map((slide, index) => (
         <div

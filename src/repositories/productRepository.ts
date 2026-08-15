@@ -74,13 +74,18 @@ function variantInputToRow(input: Partial<VariantFormInput>): Partial<ProductVar
   return row;
 }
 
+// Reads go through the variants_by_products/variants_by_ids RPCs, not the
+// base table: cost_cents/barcode (wholesale cost / internal barcode) come
+// back real for staff and null for everyone else, decided inside the
+// SECURITY DEFINER function itself via has_any_role() (see migration
+// 0041) — RLS alone can't do this since it's row-level only, and a plain
+// column-level grant can't either, since customers and staff share the
+// same Postgres `authenticated` role in Supabase. Writes (create/update/
+// delete) still target the base table.
 async function fetchVariants(productIds: string[]): Promise<Map<string, ProductVariantRow[]>> {
   if (productIds.length === 0) return new Map();
 
-  const { data, error } = await supabase
-    .from('product_variants')
-    .select('*')
-    .in('product_id', productIds);
+  const { data, error } = await supabase.rpc('variants_by_products', { _product_ids: productIds });
 
   if (error) throw error;
 
@@ -223,12 +228,9 @@ export const productRepository = {
    * loaded (see Batch 9: "Do not trust browser-supplied prices").
    */
   async getVariantForCart(variantId: string): Promise<{ variant: ProductVariant; productStatus: ProductStatus } | null> {
-    const { data: variantRow, error } = await supabase
-      .from('product_variants')
-      .select('*')
-      .eq('id', variantId)
-      .maybeSingle();
+    const { data, error } = await supabase.rpc('variants_by_ids', { _ids: [variantId] });
     if (error) throw error;
+    const variantRow = data?.[0];
     if (!variantRow) return null;
 
     const { data: productRow, error: productError } = await supabase
@@ -351,7 +353,12 @@ export const productRepository = {
   },
 
   async createVariant(productId: string, input: VariantFormInput): Promise<ProductVariant> {
-    const { data, error } = await supabase
+    // Returns only `id` from the write itself, then re-reads through the
+    // masking view — cost_cents/barcode's column-level grant on the base
+    // table is staff-and-customer-shared (`authenticated`), so an insert's
+    // own RETURNING can't be trusted with those columns either; the view is
+    // the one place that actually knows the caller is staff (see 0039).
+    const { data: inserted, error } = await supabase
       .from('product_variants')
       .insert({
         product_id: productId,
@@ -366,21 +373,25 @@ export const productRepository = {
         material: input.material || null,
         is_active: input.isActive,
       })
-      .select('*')
+      .select('id')
       .single();
     if (error) throw error;
-    return mapVariant(data, 'USD');
+    return this.getVariantById(inserted.id);
   },
 
   async updateVariant(id: string, input: Partial<VariantFormInput>): Promise<ProductVariant> {
-    const { data, error } = await supabase
-      .from('product_variants')
-      .update(variantInputToRow(input))
-      .eq('id', id)
-      .select('*')
-      .single();
+    const { error } = await supabase.from('product_variants').update(variantInputToRow(input)).eq('id', id);
     if (error) throw error;
-    return mapVariant(data, 'USD');
+    return this.getVariantById(id);
+  },
+
+  /** Staff-only in practice (RLS write-gated); reads via the masking RPC so the real cost_cents/barcode come back for the staff member who just wrote them. */
+  async getVariantById(id: string): Promise<ProductVariant> {
+    const { data, error } = await supabase.rpc('variants_by_ids', { _ids: [id] });
+    if (error) throw error;
+    const row = data?.[0];
+    if (!row) throw new Error('Variant not found.');
+    return mapVariant(row, 'USD');
   },
 
   async removeVariant(id: string): Promise<void> {
@@ -412,10 +423,7 @@ export const productRepository = {
       .single();
     if (createError) throw createError;
 
-    const { data: variants, error: variantsError } = await supabase
-      .from('product_variants')
-      .select('*')
-      .eq('product_id', id);
+    const { data: variants, error: variantsError } = await supabase.rpc('variants_by_products', { _product_ids: [id] });
     if (variantsError) throw variantsError;
 
     if (variants && variants.length > 0) {

@@ -624,6 +624,15 @@ export type Database = {
         Args: Record<string, never>;
         Returns: { product_id: string; units_sold: number }[];
       };
+      /**
+       * Batch 24 final review: masks cost_cents/barcode to null unless the
+       * caller is staff (has_any_role checked inside the function itself),
+       * since RLS can't hide a column and anon/authenticated share one
+       * Postgres role — see migrations 0040/0041. Read-only; all variant
+       * writes still go through the base `product_variants` table.
+       */
+      variants_by_ids: { Args: { _ids: string[] }; Returns: ProductVariantRow[] };
+      variants_by_products: { Args: { _product_ids: string[] }; Returns: ProductVariantRow[] };
       validate_discount_code: {
         Args: { _code: string; _cart_id: string };
         Returns: {

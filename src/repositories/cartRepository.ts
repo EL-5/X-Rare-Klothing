@@ -19,10 +19,10 @@ async function buildCart(cartId: string): Promise<Cart> {
   const variantIds = (itemRows ?? []).map((row) => row.variant_id);
   if (variantIds.length === 0) return mapCart(cartRow, []);
 
-  const { data: variantRows, error: variantsError } = await supabase
-    .from('product_variants')
-    .select('*')
-    .in('id', variantIds);
+  // Reads through the masking RPC, not the base table directly — see
+  // 0040/0041: cost_cents/barcode are staff-only, and the base table's
+  // SELECT grant for anon/authenticated no longer includes them at all.
+  const { data: variantRows, error: variantsError } = await supabase.rpc('variants_by_ids', { _ids: variantIds });
   if (variantsError) throw variantsError;
 
   const productIds = [...new Set((variantRows ?? []).map((v) => v.product_id))];

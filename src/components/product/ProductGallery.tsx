@@ -92,7 +92,7 @@ export function ProductGallery({ images, title, activeImageUrl }: ProductGallery
         onKeyDown={handleKeyDown}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
-        className="relative aspect-[4/5] flex-1 touch-pan-y select-none overflow-hidden bg-surface-muted outline-none"
+        className="relative aspect-[4/5] flex-1 touch-pan-y select-none overflow-hidden bg-surface-muted outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {images.map((image, index) => (
           <img
