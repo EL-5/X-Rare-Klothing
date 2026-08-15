@@ -65,12 +65,12 @@ export function DesktopNavigation() {
   };
 
   return (
-    <nav ref={navRef} className="relative hidden lg:block" aria-label="Primary">
+    <nav ref={navRef} className="hidden lg:block" aria-label="Primary">
       <ul className="flex items-center gap-8">
         {primaryNav.map((item) => (
           <li
             key={item.label}
-            className="relative flex items-center"
+            className="flex items-center"
             onMouseEnter={() => item.columns && setOpenLabel(item.label)}
             onMouseLeave={() => item.columns && close()}
           >

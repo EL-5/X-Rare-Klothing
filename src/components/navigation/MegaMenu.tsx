@@ -27,7 +27,10 @@ export const MegaMenu = forwardRef<HTMLDivElement, MegaMenuProps>(function MegaM
       transition={{ duration: motionTokens.duration.base, ease: motionTokens.ease.standard }}
       className="absolute left-0 top-full z-40 w-full border-t border-border bg-surface shadow-[var(--shadow-popover)]"
     >
-      <div className="mx-auto grid max-w-[var(--container-max)] grid-cols-2 gap-12 px-8 py-10">
+      <div
+        className="mx-auto grid max-w-[var(--container-max)] gap-12 px-8 py-10"
+        style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))` }}
+      >
         {columns.map((column) => (
           <div key={column.heading.label}>
             <Link

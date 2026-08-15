@@ -39,7 +39,7 @@ export function Header() {
       {announcement ? <AnnouncementBar message={announcement} /> : null}
 
       <div className="bg-header text-header-foreground">
-        <div className="mx-auto flex h-[72px] max-w-[var(--container-max)] items-center justify-between px-6 lg:px-8">
+        <div className="relative mx-auto flex h-[72px] max-w-[var(--container-max)] items-center justify-between px-6 lg:px-8">
           <button
             type="button"
             onClick={mobileNav.open}
