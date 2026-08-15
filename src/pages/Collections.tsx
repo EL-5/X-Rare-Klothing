@@ -1,59 +1,58 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { collectionService } from '@/services/collectionService';
+import { CollectionsHero } from '@/components/collections/CollectionsHero';
+import { CollectionShowcase } from '@/components/collections/CollectionShowcase';
+import { Reveal } from '@/components/about/Reveal';
 import { ROUTES } from '@/config/routes';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { useDocumentHead } from '@/hooks/useDocumentHead';
 import type { Collection } from '@/types/domain';
 
-/** Public index of published collections — seasonal drops and curated edits. */
+/** Public index of published collections — a curated editorial landing page, not a plain tile grid. */
 export function Collections() {
   const [collections, setCollections] = useState<Collection[] | null>(null);
+  const [counts, setCounts] = useState<Map<string, number>>(new Map());
 
   useDocumentHead({
     title: 'Collections',
-    description: 'Seasonal collections and special drops from X-Rare.',
+    description: "Curated seasonal edits and hand-picked drops from X-Rare — not everything makes the cut, here's what's live right now.",
     path: '/collections',
   });
 
   useEffect(() => {
-    collectionService.list().then(setCollections);
+    let cancelled = false;
+    collectionService.list().then((list) => {
+      if (cancelled) return;
+      setCollections(list);
+      Promise.all(list.map((collection) => collectionService.countProducts(collection.id))).then((results) => {
+        if (cancelled) return;
+        setCounts(new Map(list.map((collection, index) => [collection.id, results[index]])));
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
-    <div className="mx-auto max-w-[var(--container-max)] px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
-      <h1 className="text-xs font-semibold uppercase tracking-wide text-ink">Collections</h1>
-      <p className="mt-2 max-w-md text-sm text-ink/60">Seasonal collections and special drops.</p>
+    <div>
+      <CollectionsHero />
+      <CollectionShowcase collections={collections} counts={counts} />
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {collections === null
-          ? Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="aspect-[4/5] w-full" />)
-          : collections.map((collection) => (
-              <Link
-                key={collection.id}
-                to={ROUTES.collection(collection.slug)}
-                className="group relative block aspect-[4/5] overflow-hidden bg-surface-muted"
-              >
-                {collection.image ? (
-                  <OptimizedImage
-                    src={collection.image}
-                    alt=""
-                    width={800}
-                    height={1000}
-                    containerClassName="h-full w-full"
-                    className="transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)] group-hover:scale-105"
-                  />
-                ) : null}
-                <div className="absolute inset-0 bg-ink/20" />
-                <span className="absolute inset-x-0 bottom-6 text-center text-sm font-semibold uppercase tracking-[0.2em] text-surface">
-                  {collection.title}
-                </span>
-              </Link>
-            ))}
-      </div>
-
-      {collections && collections.length === 0 ? <p className="mt-8 text-sm text-ink/60">No collections available right now.</p> : null}
+      {collections && collections.length > 0 ? (
+        <section className="mx-auto max-w-[var(--container-max)] border-t border-border px-6 py-16 text-center lg:px-8 lg:py-24">
+          <Reveal>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink/50">Looking for something specific?</p>
+            <Link
+              to={ROUTES.shop}
+              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-ink underline-offset-4 hover:underline"
+            >
+              Shop the full range <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Reveal>
+        </section>
+      ) : null}
     </div>
   );
 }

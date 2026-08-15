@@ -33,6 +33,24 @@ export function unsplashUrl(id: string, opts: { w: number; h?: number; fit?: 'cr
   return `https://images.unsplash.com/photo-${id}?${params.toString()}`;
 }
 
+/**
+ * Re-requests an already-stored Unsplash URL (e.g. a `collections.image`
+ * value set by an admin) at a larger size — the CMS-configured URL is
+ * sized for its original small use (an 800px tile), so a page that wants
+ * to display the same admin-chosen image larger needs the same photo at
+ * higher resolution, not a different photo.
+ */
+export function resizeUnsplashUrl(url: string, opts: { w: number; h?: number }): string {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set('w', String(opts.w));
+    if (opts.h) parsed.searchParams.set('h', String(opts.h));
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
 export const productImages = {
   oversizedGraphicTeeFront: { id: '1508216310976-c518daae0cdc', alt: 'Model wearing an oversized graphic T-shirt against a plain wall' },
   oversizedGraphicTeeBack: { id: '1542406775-ade58c52d2e4', alt: 'Model in streetwear standing near a grey wall, back detail' },

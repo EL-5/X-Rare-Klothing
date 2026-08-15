@@ -13,6 +13,7 @@ export interface CollectionService {
   remove(id: string): Promise<void>;
   publish(id: string): Promise<Collection>;
   unpublish(id: string): Promise<Collection>;
+  countProducts(collectionId: string): Promise<number>;
   listAssignedProducts(collectionId: string): Promise<AssignedProduct[]>;
   listUnassignedProducts(collectionId: string, search?: string): Promise<{ id: string; title: string }[]>;
   assignProduct(collectionId: string, productId: string): Promise<void>;
@@ -47,6 +48,10 @@ class SupabaseCollectionService implements CollectionService {
 
   unpublish(id: string): Promise<Collection> {
     return collectionRepository.update(id, { isPublished: false });
+  }
+
+  countProducts(collectionId: string): Promise<number> {
+    return collectionRepository.countProducts(collectionId);
   }
 
   listAssignedProducts(collectionId: string): Promise<AssignedProduct[]> {
