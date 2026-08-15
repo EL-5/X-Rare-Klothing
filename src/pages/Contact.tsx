@@ -1,63 +1,53 @@
-import { useEffect, useState } from 'react';
-import { settingsService } from '@/services/settingsService';
+import { useCallback, useEffect, useState } from 'react';
 import { useDocumentHead } from '@/hooks/useDocumentHead';
-import { OptimizedImage } from '@/components/ui/OptimizedImage';
-import { editorialImages, unsplashUrl } from '@/data/images';
+import { settingsService } from '@/services/settingsService';
+import { ContactHero } from '@/components/contact/ContactHero';
+import { ContactIntro } from '@/components/contact/ContactIntro';
+import { ContactOptions } from '@/components/contact/ContactOptions';
+import { ContactForm } from '@/components/contact/ContactForm';
+import { CustomerCare } from '@/components/contact/CustomerCare';
+import { StoreLocation } from '@/components/contact/StoreLocation';
+import { Collaborations } from '@/components/contact/Collaborations';
+import { SocialSection } from '@/components/contact/SocialSection';
+import { FinalStatement } from '@/components/contact/FinalStatement';
+import type { ContactSubject } from '@/types/domain';
 
+const DEFAULT_SUPPORT_EMAIL = 'support@x-rare.com';
+
+/** Premium fashion-editorial Contact page — a visual journey (hero → info → form → support → location → social → statement), not a bare form (see docs/about-page-redesign pattern this mirrors). */
 export function Contact() {
-  const [supportEmail, setSupportEmail] = useState<string | null>(null);
+  const [supportEmail, setSupportEmail] = useState(DEFAULT_SUPPORT_EMAIL);
+  const [presetSubject, setPresetSubject] = useState<ContactSubject | null>(null);
 
   useDocumentHead({
-    title: 'Contact',
-    description: "Questions about an order, sizing, or anything else — we're here to help.",
+    title: 'Contact X-Rare — Get in Touch',
+    description: 'Contact X-Rare for customer support, orders, product questions, collaborations and general enquiries.',
     path: '/contact',
   });
 
   useEffect(() => {
     settingsService.getAll().then((settings) => {
       const email = settings.support_email;
-      if (typeof email === 'string' && email) setSupportEmail(email);
+      if (typeof email === 'string' && email.trim()) setSupportEmail(email);
     });
+  }, []);
+
+  const scrollToForm = useCallback((subject?: ContactSubject) => {
+    if (subject) setPresetSubject(subject);
+    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   return (
     <div>
-      <div className="relative h-[160px] w-full overflow-hidden bg-surface-muted lg:h-[220px]">
-        <OptimizedImage
-          src={unsplashUrl(editorialImages.contactBanner.id, { w: 1600, h: 500 })}
-          alt={editorialImages.contactBanner.alt}
-          width={1600}
-          height={500}
-          containerClassName="h-full w-full"
-          loading="eager"
-        />
-      </div>
-
-      <div className="mx-auto max-w-2xl px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
-      <h1 className="text-xs font-semibold uppercase tracking-wide text-ink">Contact Us</h1>
-      <p className="mt-4 text-sm leading-relaxed text-ink/70">
-        Questions about an order, sizing, or anything else — we're here to help.
-      </p>
-
-      <dl className="mt-8 flex flex-col gap-6 text-sm">
-        <div>
-          <dt className="font-semibold uppercase tracking-wide text-ink">Email</dt>
-          <dd className="mt-1 text-ink/70">
-            <a href={`mailto:${supportEmail ?? 'support@x-rare.com'}`} className="underline-offset-2 hover:underline">
-              {supportEmail ?? 'support@x-rare.com'}
-            </a>
-          </dd>
-        </div>
-        <div>
-          <dt className="font-semibold uppercase tracking-wide text-ink">Instagram</dt>
-          <dd className="mt-1 text-ink/70">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
-              Instagram
-            </a>
-          </dd>
-        </div>
-      </dl>
-      </div>
+      <ContactHero />
+      <ContactIntro />
+      <ContactOptions supportEmail={supportEmail} onStartCollaboration={() => scrollToForm('collaboration')} />
+      <ContactForm presetSubject={presetSubject} />
+      <CustomerCare />
+      <StoreLocation />
+      <Collaborations onCollaborate={() => scrollToForm('collaboration')} />
+      <SocialSection />
+      <FinalStatement />
     </div>
   );
 }

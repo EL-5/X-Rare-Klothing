@@ -80,6 +80,12 @@ export const editorialImages = {
   contactBanner: { id: '1441984904996-e0b6ba687e04', alt: 'Minimal clothing boutique interior with hanging racks' },
 } satisfies Record<string, CatalogImage>;
 
+/** Contact page — premium editorial redesign. */
+export const contactImages = {
+  hero: { id: '1544005313-94ddf0286df2', alt: 'Warm, confident portrait — X-Rare contact hero' },
+  formSide: { id: '1677779817420-b3ad7a4a1f2c', alt: 'Close-up gold chain detail on jacket fabric, editorial styling' },
+} satisfies Record<string, CatalogImage>;
+
 /** About page — premium fashion-editorial redesign. One entry per section that needs a photo. */
 export const aboutImages = {
   hero: { id: '1785741833876-8db063dd8654', alt: 'Confident model in editorial streetwear, X-Rare campaign' },

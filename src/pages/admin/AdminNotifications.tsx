@@ -28,6 +28,7 @@ const TYPE_LABELS: Record<NotificationType, string> = {
   order_delivered: 'Order Delivered',
   refund: 'Refund',
   newsletter: 'Newsletter',
+  contact_submission: 'Contact Submission',
 };
 
 export function AdminNotifications() {

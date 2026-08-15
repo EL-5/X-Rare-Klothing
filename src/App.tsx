@@ -66,6 +66,9 @@ const AdminHomepage = lazy(() => import('@/pages/admin/AdminHomepage').then((m) 
 const AdminNotifications = lazy(() =>
   import('@/pages/admin/AdminNotifications').then((m) => ({ default: m.AdminNotifications })),
 );
+const AdminContactSubmissions = lazy(() =>
+  import('@/pages/admin/AdminContactSubmissions').then((m) => ({ default: m.AdminContactSubmissions })),
+);
 const AdminAnalytics = lazy(() => import('@/pages/admin/AdminAnalytics').then((m) => ({ default: m.AdminAnalytics })));
 const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings').then((m) => ({ default: m.AdminSettings })));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers').then((m) => ({ default: m.AdminUsers })));
@@ -145,6 +148,7 @@ export default function App() {
                   <Route path="customers" element={<AdminCustomers />} />
                   <Route path="customers/:id" element={<AdminCustomerDetail />} />
                   <Route path="notifications" element={<AdminNotifications />} />
+                  <Route path="contact-submissions" element={<AdminContactSubmissions />} />
                 </Route>
 
                 <Route element={<RequireStaffRole roles={['admin', 'super_admin']} />}>

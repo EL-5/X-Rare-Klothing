@@ -268,9 +268,45 @@ export type NotificationType =
   | 'order_shipped'
   | 'order_delivered'
   | 'refund'
-  | 'newsletter';
+  | 'newsletter'
+  | 'contact_submission';
 
 export type NotificationStatus = 'pending' | 'sent' | 'failed';
+
+export type ContactSubject =
+  | 'general_question'
+  | 'order_support'
+  | 'product_question'
+  | 'returns_exchanges'
+  | 'wholesale'
+  | 'collaboration'
+  | 'press'
+  | 'other';
+
+export type ContactStatus = 'new' | 'in_progress' | 'resolved';
+
+export interface ContactSubmissionInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  subject: ContactSubject;
+  orderNumber?: string;
+  message: string;
+}
+
+export interface ContactSubmission {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  subject: ContactSubject;
+  orderNumber: string | null;
+  message: string;
+  status: ContactStatus;
+  createdAt: string;
+}
 
 export interface Notification {
   id: string;

@@ -70,8 +70,19 @@ export type NotificationType =
   | 'order_shipped'
   | 'order_delivered'
   | 'refund'
-  | 'newsletter';
+  | 'newsletter'
+  | 'contact_submission';
 export type NotificationStatus = 'pending' | 'sent' | 'failed';
+export type ContactSubject =
+  | 'general_question'
+  | 'order_support'
+  | 'product_question'
+  | 'returns_exchanges'
+  | 'wholesale'
+  | 'collaboration'
+  | 'press'
+  | 'other';
+export type ContactStatus = 'new' | 'in_progress' | 'resolved';
 export type AnalyticsEventType =
   | 'page_view'
   | 'product_view'
@@ -448,6 +459,20 @@ export type TaxRateRow = {
   created_at: string;
 };
 
+export type ContactSubmissionRow = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  subject: ContactSubject;
+  order_number: string | null;
+  message: string;
+  status: ContactStatus;
+  created_at: string;
+  updated_at: string;
+};
+
 export type NewsletterSubscriberRow = {
   id: string;
   email: string;
@@ -605,6 +630,7 @@ export type Database = {
       shipping_zones: Table<ShippingZoneRow, 'name'>;
       shipping_methods: Table<ShippingMethodRow, 'zone_id' | 'name' | 'price_cents'>;
       tax_rates: Table<TaxRateRow, 'country_code' | 'rate'>;
+      contact_submissions: Table<ContactSubmissionRow, 'first_name' | 'last_name' | 'email' | 'message'>;
       newsletter_subscribers: Table<NewsletterSubscriberRow, 'email'>;
       pages: Table<PageRow, 'slug' | 'title'>;
       blog_posts: Table<BlogPostRow, 'slug' | 'title'>;
