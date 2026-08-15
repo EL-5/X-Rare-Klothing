@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { settingsService } from '@/services/settingsService';
 import { useDocumentHead } from '@/hooks/useDocumentHead';
+import { OptimizedImage } from '@/components/ui/OptimizedImage';
+import { editorialImages, unsplashUrl } from '@/data/images';
 
 export function Contact() {
   const [supportEmail, setSupportEmail] = useState<string | null>(null);
@@ -19,7 +21,19 @@ export function Contact() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
+    <div>
+      <div className="relative h-[160px] w-full overflow-hidden bg-surface-muted lg:h-[220px]">
+        <OptimizedImage
+          src={unsplashUrl(editorialImages.contactBanner.id, { w: 1600, h: 500 })}
+          alt={editorialImages.contactBanner.alt}
+          width={1600}
+          height={500}
+          containerClassName="h-full w-full"
+          loading="eager"
+        />
+      </div>
+
+      <div className="mx-auto max-w-2xl px-6 py-[var(--spacing-section-mobile)] lg:px-8 lg:py-[var(--spacing-section-desktop)]">
       <h1 className="text-xs font-semibold uppercase tracking-wide text-ink">Contact Us</h1>
       <p className="mt-4 text-sm leading-relaxed text-ink/70">
         Questions about an order, sizing, or anything else — we're here to help.
@@ -43,6 +57,7 @@ export function Contact() {
           </dd>
         </div>
       </dl>
+      </div>
     </div>
   );
 }

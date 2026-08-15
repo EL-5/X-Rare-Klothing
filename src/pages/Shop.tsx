@@ -9,6 +9,7 @@ import { ProductGrid } from '@/components/shop/ProductGrid';
 import { SortDropdown } from '@/components/shop/SortDropdown';
 import { QuickViewDrawer } from '@/components/product/QuickViewDrawer';
 import { Button } from '@/components/ui/Button';
+import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { collectionService } from '@/services/collectionService';
 import { categoryService } from '@/services/categoryService';
 import { useDocumentHead } from '@/hooks/useDocumentHead';
@@ -26,6 +27,7 @@ export function Shop({ scope }: ShopProps) {
   const { slug = '' } = useParams<{ slug: string }>();
   const [title, setTitle] = useState<string | null>(scope === 'shop' ? 'Shop' : null);
   const [description, setDescription] = useState<string | null>(null);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const filterDrawer = useDisclosure();
 
@@ -39,12 +41,14 @@ export function Shop({ scope }: ShopProps) {
       collectionService.getBySlug(slug).then((collection) => {
         setTitle(collection?.title ?? 'Collection');
         setDescription(collection?.description ?? null);
+        setCoverImage(collection?.image ?? null);
       });
     } else if (scope === 'category') {
       categoryService.list().then((categories) => {
         const category = categories.find((c) => c.slug === slug);
         setTitle(category?.name ?? 'Category');
         setDescription(category?.description ?? null);
+        setCoverImage(category?.image ?? null);
       });
     }
   }, [scope, slug]);
@@ -57,7 +61,18 @@ export function Shop({ scope }: ShopProps) {
   });
 
   return (
-    <div className="mx-auto max-w-[var(--container-max)] px-6 py-10 lg:px-8">
+    <div>
+      {coverImage ? (
+        <div className="relative h-[220px] w-full overflow-hidden bg-surface-muted lg:h-[320px]">
+          <OptimizedImage src={coverImage} alt="" width={2000} height={640} containerClassName="h-full w-full" loading="eager" />
+          <div className="absolute inset-0 bg-ink/30" />
+          <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+            <h1 className="text-2xl font-semibold uppercase tracking-wide text-surface lg:text-4xl">{title}</h1>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="mx-auto max-w-[var(--container-max)] px-6 py-10 lg:px-8">
       <nav aria-label="Breadcrumb" className="mb-6 text-xs text-ink/60">
         <Link to={ROUTES.home} className="hover:text-ink">
           Home
@@ -75,7 +90,7 @@ export function Shop({ scope }: ShopProps) {
       </nav>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold uppercase tracking-wide text-ink">{title ?? ' '}</h1>
+        {coverImage ? null : <h1 className="text-2xl font-semibold uppercase tracking-wide text-ink">{title ?? ' '}</h1>}
         {description ? <p className="mt-2 max-w-xl text-sm text-ink/60">{description}</p> : null}
       </div>
 
@@ -116,6 +131,7 @@ export function Shop({ scope }: ShopProps) {
 
       <FilterDrawer isOpen={filterDrawer.isOpen} onClose={filterDrawer.close} listing={listing} />
       <QuickViewDrawer product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />
+      </div>
     </div>
   );
 }

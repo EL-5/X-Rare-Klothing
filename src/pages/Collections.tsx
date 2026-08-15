@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { collectionService } from '@/services/collectionService';
 import { ROUTES } from '@/config/routes';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { useDocumentHead } from '@/hooks/useDocumentHead';
 import type { Collection } from '@/types/domain';
 
@@ -34,14 +35,16 @@ export function Collections() {
                 to={ROUTES.collection(collection.slug)}
                 className="group relative block aspect-[4/5] overflow-hidden bg-surface-muted"
               >
-                <img
-                  src={collection.image ?? `https://picsum.photos/seed/xr-collection-${collection.slug}/800/1000`}
-                  alt=""
-                  width={800}
-                  height={1000}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)] group-hover:scale-105"
-                />
+                {collection.image ? (
+                  <OptimizedImage
+                    src={collection.image}
+                    alt=""
+                    width={800}
+                    height={1000}
+                    containerClassName="h-full w-full"
+                    className="transition-transform duration-[var(--duration-slow)] ease-[var(--ease-standard)] group-hover:scale-105"
+                  />
+                ) : null}
                 <div className="absolute inset-0 bg-ink/20" />
                 <span className="absolute inset-x-0 bottom-6 text-center text-sm font-semibold uppercase tracking-[0.2em] text-surface">
                   {collection.title}

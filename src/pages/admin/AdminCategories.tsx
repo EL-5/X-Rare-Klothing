@@ -17,7 +17,7 @@ function slugify(value: string): string {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-const emptyForm: CategoryInput = { slug: '', name: '', description: '', parentId: null };
+const emptyForm: CategoryInput = { slug: '', name: '', description: '', parentId: null, image: '' };
 
 export function AdminCategories() {
   const { show } = useToast();
@@ -44,7 +44,7 @@ export function AdminCategories() {
   };
 
   const startEdit = (category: Category) => {
-    setForm({ slug: category.slug, name: category.name, description: category.description ?? '', parentId: category.parentId });
+    setForm({ slug: category.slug, name: category.name, description: category.description ?? '', parentId: category.parentId, image: category.image ?? '' });
     setSlugTouched(true);
     setEditingId(category.id);
     setShowForm(true);
@@ -154,6 +154,16 @@ export function AdminCategories() {
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               />
+              <AdminInput
+                containerClassName="sm:col-span-2"
+                label="Image URL"
+                placeholder="https://…"
+                value={form.image ?? ''}
+                onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
+              />
+              {form.image ? (
+                <img src={form.image} alt="" className="h-24 w-24 rounded-md border border-slate-200 object-cover sm:col-span-2" />
+              ) : null}
               <div className="flex gap-2 sm:col-span-2">
                 <AdminButton type="submit" isLoading={isSaving}>
                   Save
@@ -176,6 +186,7 @@ export function AdminCategories() {
           <AdminTable>
             <AdminTHead>
               <tr>
+                <AdminTh />
                 <AdminTh>Name</AdminTh>
                 <AdminTh>Slug</AdminTh>
                 <AdminTh>Parent</AdminTh>
@@ -185,6 +196,13 @@ export function AdminCategories() {
             <AdminTBody>
               {orderedWithDepth().map(({ category, depth }) => (
                 <AdminTr key={category.id}>
+                  <AdminTd>
+                    {category.image ? (
+                      <img src={category.image} alt="" className="h-10 w-10 rounded-md object-cover" />
+                    ) : (
+                      <div className="h-10 w-10 rounded-md bg-slate-100" />
+                    )}
+                  </AdminTd>
                   <AdminTd>
                     <button
                       type="button"
