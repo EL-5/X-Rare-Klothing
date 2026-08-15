@@ -22,6 +22,7 @@ import type {
 } from '@/types/database';
 import type {
   Address,
+  BrandSummary,
   Cart,
   CartLineItem,
   Collection,
@@ -75,6 +76,7 @@ export function mapProduct(
   variantRows: ProductVariantRow[],
   images: ProductImageRow[] = [],
   currency = 'USD',
+  brand: BrandSummary | null = null,
 ): Product {
   const imageByVariantId = new Map<string, string>();
   for (const img of images) {
@@ -92,7 +94,7 @@ export function mapProduct(
     slug: row.slug,
     title: row.name,
     description: row.description,
-    brand: row.brand,
+    brand,
     tags: row.tags,
     price: cheapest ? cheapest.price : toMoney(0, currency),
     compareAtPrice: cheapest ? cheapest.compareAtPrice : null,

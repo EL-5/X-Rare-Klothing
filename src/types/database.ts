@@ -154,6 +154,21 @@ export type CategoryRow = {
   updated_at: string;
 };
 
+export type BrandRow = {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string | null;
+  cover_image: string | null;
+  description: string | null;
+  country: string | null;
+  website: string | null;
+  is_published: boolean;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type ProductRow = {
   id: string;
   slug: string;
@@ -161,7 +176,7 @@ export type ProductRow = {
   description: string | null;
   sku: string | null;
   status: ProductStatus;
-  brand: string | null;
+  brand_id: string | null;
   category_id: string | null;
   tags: string[];
   seo_title: string | null;
@@ -603,6 +618,7 @@ export type Database = {
         AddressRow,
         'profile_id' | 'first_name' | 'last_name' | 'address1' | 'city' | 'country_code'
       >;
+      brands: Table<BrandRow, 'name' | 'slug'>;
       categories: Table<CategoryRow, 'slug' | 'name'>;
       products: Table<ProductRow, 'slug' | 'name'>;
       product_options: Table<ProductOptionRow, 'product_id' | 'name'>;

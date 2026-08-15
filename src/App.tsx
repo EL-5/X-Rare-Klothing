@@ -20,6 +20,8 @@ import { Home } from '@/pages/Home';
 
 const Shop = lazy(() => import('@/pages/Shop').then((m) => ({ default: m.Shop })));
 const Collections = lazy(() => import('@/pages/Collections').then((m) => ({ default: m.Collections })));
+const Brands = lazy(() => import('@/pages/Brands').then((m) => ({ default: m.Brands })));
+const BrandDetail = lazy(() => import('@/pages/BrandDetail').then((m) => ({ default: m.BrandDetail })));
 const About = lazy(() => import('@/pages/About').then((m) => ({ default: m.About })));
 const FAQ = lazy(() => import('@/pages/FAQ').then((m) => ({ default: m.FAQ })));
 const Contact = lazy(() => import('@/pages/Contact').then((m) => ({ default: m.Contact })));
@@ -52,6 +54,7 @@ const AdminCollectionDetail = lazy(() =>
   import('@/pages/admin/AdminCollectionDetail').then((m) => ({ default: m.AdminCollectionDetail })),
 );
 const AdminCategories = lazy(() => import('@/pages/admin/AdminCategories').then((m) => ({ default: m.AdminCategories })));
+const AdminBrands = lazy(() => import('@/pages/admin/AdminBrands').then((m) => ({ default: m.AdminBrands })));
 const AdminInventory = lazy(() => import('@/pages/admin/AdminInventory').then((m) => ({ default: m.AdminInventory })));
 const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders').then((m) => ({ default: m.AdminOrders })));
 const AdminOrderDetail = lazy(() => import('@/pages/admin/AdminOrderDetail').then((m) => ({ default: m.AdminOrderDetail })));
@@ -85,6 +88,8 @@ export default function App() {
               <Route path="collections" element={<Collections />} />
               <Route path="collections/:slug" element={<Shop scope="collection" />} />
               <Route path="category/:slug" element={<Shop scope="category" />} />
+              <Route path="brands" element={<Brands />} />
+              <Route path="brands/:slug" element={<BrandDetail />} />
               <Route path="products/:slug" element={<ProductDetail />} />
               <Route path="search" element={<SearchResults />} />
               <Route path="checkout" element={<Checkout />} />
@@ -129,6 +134,7 @@ export default function App() {
                   <Route path="collections" element={<AdminCollections />} />
                   <Route path="collections/:id" element={<AdminCollectionDetail />} />
                   <Route path="categories" element={<AdminCategories />} />
+                  <Route path="brands" element={<AdminBrands />} />
                   <Route path="reviews" element={<AdminReviews />} />
                   <Route path="content" element={<AdminContent />} />
                   <Route path="faqs" element={<AdminFAQs />} />

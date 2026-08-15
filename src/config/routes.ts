@@ -4,6 +4,8 @@ export const ROUTES = {
   collections: '/collections',
   collection: (slug: string) => `/collections/${slug}`,
   category: (slug: string) => `/category/${slug}`,
+  brands: '/brands',
+  brand: (slug: string) => `/brands/${slug}`,
   product: (slug: string) => `/products/${slug}`,
   search: '/search',
   checkout: '/checkout',

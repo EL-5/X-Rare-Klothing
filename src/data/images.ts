@@ -86,6 +86,14 @@ export const contactImages = {
   formSide: { id: '1677779817420-b3ad7a4a1f2c', alt: 'Close-up gold chain detail on jacket fabric, editorial styling' },
 } satisfies Record<string, CatalogImage>;
 
+/** Multi-brand / Liberian-identity repositioning pass. Contemporary West African fashion editorial — people, style, city life, not tourism or traditional-costume imagery. */
+export const liberianImages = {
+  homeHero: { id: '1783013959203-1176111307e7', alt: 'Group of young men in contemporary streetwear, urban editorial' },
+  brandsHero: { id: '1535530705774-695729778c55', alt: 'Two men in stylish contemporary streetwear against an urban backdrop' },
+  localSpotlight: { id: '1623472927536-c966c62f0701', alt: 'Confident portrait, contemporary West African street style' },
+  aboutDestination: { id: '1783379794529-361c9225b3d5', alt: 'Models in coordinated contemporary fashion, editorial styling' },
+} satisfies Record<string, CatalogImage>;
+
 /** About page — premium fashion-editorial redesign. One entry per section that needs a photo. */
 export const aboutImages = {
   hero: { id: '1785741833876-8db063dd8654', alt: 'Confident model in editorial streetwear, X-Rare campaign' },

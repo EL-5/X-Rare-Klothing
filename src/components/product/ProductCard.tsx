@@ -117,6 +117,7 @@ export function ProductCard({ product, priority = false, inStock, onQuickView, c
       </div>
 
       <div className="mt-3 flex flex-col gap-1">
+        {product.brand ? <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink/50">{product.brand.name}</p> : null}
         <h3 className="text-sm uppercase tracking-wide text-ink">{product.title}</h3>
         <p className="text-sm text-ink">
           {isOnSale ? <span className="mr-2 text-ink/60 line-through">{formatMoney(product.compareAtPrice!)}</span> : null}

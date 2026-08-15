@@ -18,6 +18,7 @@ export const SORT_OPTIONS: { value: SortValue; label: string }[] = [
 export interface ProductListingScope {
   collectionSlug?: string;
   categorySlug?: string;
+  brandSlug?: string;
 }
 
 export interface ProductListingFacets {
@@ -62,7 +63,7 @@ export function useProductListing(scope: ProductListingScope) {
   /** On an unscoped route (/shop) these fall back to ?category=/?collection= so the filter panel can narrow without leaving the page; a route-level scope (/collections/:slug, /category/:slug) always wins. */
   const effectiveCollectionSlug = scope.collectionSlug ?? searchParams.get('collection') ?? undefined;
   const effectiveCategorySlug = scope.categorySlug ?? searchParams.get('category') ?? undefined;
-  const isRouteScoped = Boolean(scope.collectionSlug || scope.categorySlug);
+  const isRouteScoped = Boolean(scope.collectionSlug || scope.categorySlug || scope.brandSlug);
 
   useEffect(() => {
     let cancelled = false;
@@ -70,7 +71,9 @@ export function useProductListing(scope: ProductListingScope) {
     setInStockVariantIds(null);
     setFeaturedPositions(effectiveCollectionSlug ? null : new Map());
 
-    productService.list({ collectionSlug: effectiveCollectionSlug, categorySlug: effectiveCategorySlug, pageSize: 200 }).then(async (result) => {
+    productService
+      .list({ collectionSlug: effectiveCollectionSlug, categorySlug: effectiveCategorySlug, brandSlug: scope.brandSlug, pageSize: 200 })
+      .then(async (result) => {
       if (cancelled) return;
       setRawProducts(result.items);
 
@@ -96,7 +99,7 @@ export function useProductListing(scope: ProductListingScope) {
     return () => {
       cancelled = true;
     };
-  }, [effectiveCollectionSlug, effectiveCategorySlug]);
+  }, [effectiveCollectionSlug, effectiveCategorySlug, scope.brandSlug]);
 
   useEffect(() => {
     if (sort !== 'best-selling' || salesCounts !== null) return;

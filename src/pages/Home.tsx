@@ -11,7 +11,7 @@ export function Home() {
 
   useDocumentHead({
     title: 'X-Rare',
-    description: 'X-Rare — rare by design, different by nature. Shop new arrivals, collections, and accessories.',
+    description: 'X-Rare — a Liberia-rooted fashion destination. Rare by design, different by nature. Shop X-Rare and the brands we curate.',
     path: '/',
   });
 

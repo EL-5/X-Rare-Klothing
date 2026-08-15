@@ -1,11 +1,12 @@
 import { supabase } from '@/lib/supabase';
-import type { Paginated, Product, ProductVariant } from '@/types/domain';
+import type { BrandSummary, Paginated, Product, ProductVariant } from '@/types/domain';
 import type { ProductRow, ProductStatus, ProductVariantRow } from '@/types/database';
 import { mapProduct, mapVariant, type ProductImageRow } from './mappers';
 
 export interface ListProductsParams {
   collectionSlug?: string;
   categorySlug?: string;
+  brandSlug?: string;
   page?: number;
   pageSize?: number;
   sortBy?: 'featured' | 'price_asc' | 'price_desc' | 'title_asc' | 'title_desc' | 'newest';
@@ -24,7 +25,7 @@ export interface ProductFormInput {
   description?: string;
   sku?: string;
   status: ProductStatus;
-  brand?: string;
+  brandId?: string | null;
   categoryId?: string | null;
   tags: string[];
   seoTitle?: string;
@@ -51,7 +52,7 @@ function productInputToRow(input: Partial<ProductFormInput>): Partial<ProductRow
   if (input.description !== undefined) row.description = input.description || null;
   if (input.sku !== undefined) row.sku = input.sku || null;
   if (input.status !== undefined) row.status = input.status;
-  if (input.brand !== undefined) row.brand = input.brand || null;
+  if (input.brandId !== undefined) row.brand_id = input.brandId || null;
   if (input.categoryId !== undefined) row.category_id = input.categoryId || null;
   if (input.tags !== undefined) row.tags = input.tags;
   if (input.seoTitle !== undefined) row.seo_title = input.seoTitle || null;
@@ -118,11 +119,32 @@ async function fetchImages(productIds: string[]): Promise<Map<string, ProductIma
   return byProduct;
 }
 
+async function fetchBrands(brandIds: string[]): Promise<Map<string, BrandSummary>> {
+  const ids = [...new Set(brandIds)];
+  if (ids.length === 0) return new Map();
+
+  const { data, error } = await supabase.from('brands').select('id, name, slug').in('id', ids);
+  if (error) throw error;
+
+  return new Map((data ?? []).map((b) => [b.id, { id: b.id, name: b.name, slug: b.slug }]));
+}
+
 async function hydrate(rows: ProductRow[]): Promise<Product[]> {
   const ids = rows.map((row) => row.id);
-  const [variantsByProduct, imagesByProduct] = await Promise.all([fetchVariants(ids), fetchImages(ids)]);
+  const brandIds = rows.map((row) => row.brand_id).filter((id): id is string => id !== null);
+  const [variantsByProduct, imagesByProduct, brandsById] = await Promise.all([
+    fetchVariants(ids),
+    fetchImages(ids),
+    fetchBrands(brandIds),
+  ]);
   return rows.map((row) =>
-    mapProduct(row, variantsByProduct.get(row.id) ?? [], imagesByProduct.get(row.id) ?? []),
+    mapProduct(
+      row,
+      variantsByProduct.get(row.id) ?? [],
+      imagesByProduct.get(row.id) ?? [],
+      'USD',
+      row.brand_id ? (brandsById.get(row.brand_id) ?? null) : null,
+    ),
   );
 }
 
@@ -148,6 +170,13 @@ export const productRepository = {
     const to = from + pageSize - 1;
 
     let query = supabase.from('products').select('*', { count: 'exact' }).eq('status', 'active');
+
+    if (params.brandSlug) {
+      const { data: brand, error: brandError } = await supabase.from('brands').select('id').eq('slug', params.brandSlug).maybeSingle();
+      if (brandError) throw brandError;
+      if (!brand) return { items: [], total: 0, page, pageSize, hasMore: false };
+      query = query.eq('brand_id', brand.id);
+    }
 
     if (params.collectionSlug) {
       const { data: collection, error: collectionError } = await supabase
@@ -322,7 +351,7 @@ export const productRepository = {
         description: input.description || null,
         sku: input.sku || null,
         status: input.status,
-        brand: input.brand || null,
+        brand_id: input.brandId || null,
         category_id: input.categoryId || null,
         tags: input.tags,
         seo_title: input.seoTitle || null,
@@ -413,7 +442,7 @@ export const productRepository = {
         description: source.description,
         sku: source.sku ? `${source.sku}-COPY-${suffix}` : null,
         status: 'draft',
-        brand: source.brand,
+        brand_id: source.brand_id,
         category_id: source.category_id,
         tags: source.tags,
         seo_title: source.seo_title,

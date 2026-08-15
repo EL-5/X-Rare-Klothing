@@ -16,6 +16,7 @@ import {
   Mail,
   MessageSquare,
   HelpCircle,
+  Tag,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { AdminRole } from '@/types/domain';
@@ -33,6 +34,7 @@ export const adminNavItems: AdminNavItem[] = [
   { label: 'Products', href: '/admin/products', icon: Package, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Collections', href: '/admin/collections', icon: Layers, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Categories', href: '/admin/categories', icon: FolderTree, roles: ['content_manager', 'admin', 'super_admin'] },
+  { label: 'Brands', href: '/admin/brands', icon: Tag, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Inventory', href: '/admin/inventory', icon: Boxes, roles: ['inventory_manager', 'admin', 'super_admin'] },
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart, roles: ['order_manager', 'admin', 'super_admin'] },
   { label: 'Customers', href: '/admin/customers', icon: Users, roles: ['customer_support', 'order_manager', 'admin', 'super_admin'] },
@@ -64,6 +66,7 @@ export const adminRouteLabels: Record<string, string> = {
   new: 'New',
   collections: 'Collections',
   categories: 'Categories',
+  brands: 'Brands',
   inventory: 'Inventory',
   orders: 'Orders',
   customers: 'Customers',

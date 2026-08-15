@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, AtSign, Mail, Package } from 'lucide-react';
+import { ArrowUpRight, AtSign, Mail, Package, Tag } from 'lucide-react';
 import { ROUTES } from '@/config/routes';
 import { Reveal } from '@/components/about/Reveal';
 
@@ -8,11 +8,11 @@ export interface ContactOptionsProps {
   onStartCollaboration: () => void;
 }
 
-/** 03 — four premium cards: how to reach X-Rare, by intent. */
+/** 03 — five premium cards: how to reach X-Rare, by intent. */
 export function ContactOptions({ supportEmail, onStartCollaboration }: ContactOptionsProps) {
   return (
     <section className="mx-auto max-w-[var(--container-max)] px-6 pb-20 lg:px-8 lg:pb-32">
-      <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2 lg:grid-cols-5">
         <Reveal className="bg-surface p-8">
           <Mail className="h-5 w-5 text-accent" aria-hidden="true" />
           <h3 className="mt-5 text-sm font-semibold uppercase tracking-wide text-ink">Customer Care</h3>
@@ -46,6 +46,19 @@ export function ContactOptions({ supportEmail, onStartCollaboration }: ContactOp
             className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-ink underline-offset-4 hover:underline"
           >
             Start a Conversation <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </button>
+        </Reveal>
+
+        <Reveal delay={0.15} className="bg-surface p-8">
+          <Tag className="h-5 w-5 text-accent" aria-hidden="true" />
+          <h3 className="mt-5 text-sm font-semibold uppercase tracking-wide text-ink">Brand Partners</h3>
+          <p className="mt-2 text-sm text-ink/60">Own a label and want to be carried on X-Rare? We'd love to hear from you.</p>
+          <button
+            type="button"
+            onClick={onStartCollaboration}
+            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-ink underline-offset-4 hover:underline"
+          >
+            Submit Your Brand <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </Reveal>
 

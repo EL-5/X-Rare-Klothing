@@ -14,9 +14,10 @@ import { ProductImagesManager } from '@/components/admin/products/ProductImagesM
 import { ProductCollectionsPicker } from '@/components/admin/products/ProductCollectionsPicker';
 import { productService } from '@/services/productService';
 import { categoryService } from '@/services/categoryService';
+import { brandService } from '@/services/brandService';
 import { useToast } from '@/stores/ToastStore';
 import type { Category } from '@/repositories/categoryRepository';
-import type { Product } from '@/types/domain';
+import type { BrandSummary, Product } from '@/types/domain';
 import type { ProductStatus } from '@/types/database';
 
 const STATUS_VARIANT: Record<ProductStatus, AdminBadgeVariant> = { active: 'success', draft: 'neutral', archived: 'warning' };
@@ -37,6 +38,7 @@ export function AdminProductDetail() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<BrandSummary[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -48,7 +50,7 @@ export function AdminProductDetail() {
   const [slug, setSlug] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
   const [description, setDescription] = useState('');
-  const [brand, setBrand] = useState('');
+  const [brandId, setBrandId] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [status, setStatus] = useState<ProductStatus>('draft');
   const [tags, setTags] = useState('');
@@ -57,6 +59,7 @@ export function AdminProductDetail() {
 
   useEffect(() => {
     categoryService.list().then(setCategories);
+    brandService.listSummaries().then(setBrands);
   }, []);
 
   const loadProduct = () => {
@@ -68,7 +71,7 @@ export function AdminProductDetail() {
         setName(result.title);
         setSlug(result.slug);
         setDescription(result.description ?? '');
-        setBrand(result.brand ?? '');
+        setBrandId(result.brand?.id ?? '');
         setTags(result.tags.join(', '));
         setStatus(result.status);
       }
@@ -94,7 +97,7 @@ export function AdminProductDetail() {
         name,
         slug,
         description: description || undefined,
-        brand: brand || undefined,
+        brandId: brandId || null,
         categoryId: categoryId || null,
         status,
         tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
@@ -267,7 +270,12 @@ export function AdminProductDetail() {
                 onChange={(e) => setCategoryId(e.target.value)}
                 options={[{ value: '', label: 'None' }, ...categories.map((c) => ({ value: c.id, label: c.name }))]}
               />
-              <AdminInput label="Brand" value={brand} onChange={(e) => setBrand(e.target.value)} />
+              <AdminSelect
+                label="Brand"
+                value={brandId}
+                onChange={(e) => setBrandId(e.target.value)}
+                options={[{ value: '', label: 'None' }, ...brands.map((b) => ({ value: b.id, label: b.name }))]}
+              />
             </AdminCardBody>
           </AdminCard>
 

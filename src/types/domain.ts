@@ -22,12 +22,41 @@ export interface ProductVariant {
   image: string | null;
 }
 
+export interface BrandSummary {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface Brand extends BrandSummary {
+  logo: string | null;
+  coverImage: string | null;
+  description: string | null;
+  country: string | null;
+  website: string | null;
+  isPublished: boolean;
+  isFeatured: boolean;
+  productCount: number;
+}
+
+export interface BrandInput {
+  name: string;
+  slug: string;
+  logo?: string | null;
+  coverImage?: string | null;
+  description?: string | null;
+  country?: string | null;
+  website?: string | null;
+  isPublished?: boolean;
+  isFeatured?: boolean;
+}
+
 export interface Product {
   id: string;
   slug: string;
   title: string;
   description: string | null;
-  brand: string | null;
+  brand: BrandSummary | null;
   tags: string[];
   /** Lowest variant price — what a listing card shows before a variant is picked. */
   price: Money;

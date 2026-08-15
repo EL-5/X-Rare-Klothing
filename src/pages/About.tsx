@@ -5,6 +5,7 @@ import { MeaningOfX } from '@/components/about/MeaningOfX';
 import { StoryChapters } from '@/components/about/StoryChapters';
 import { TheCode } from '@/components/about/TheCode';
 import { GlobalVision } from '@/components/about/GlobalVision';
+import { TwoStories } from '@/components/about/TwoStories';
 import { TheCustomer } from '@/components/about/TheCustomer';
 import { TheFuture } from '@/components/about/TheFuture';
 import { Manifesto } from '@/components/about/Manifesto';
@@ -15,7 +16,7 @@ export function About() {
   useDocumentHead({
     title: 'About — Rare by Design',
     description:
-      'Discover the story behind X-Rare, an African-born fashion brand built around individuality, confidence, exclusivity and the freedom to define your own identity.',
+      'Discover the story behind X-Rare, a Liberia-rooted fashion brand and destination built around individuality, confidence, exclusivity and the freedom to define your own identity.',
     path: '/about',
   });
 
@@ -27,6 +28,7 @@ export function About() {
       <StoryChapters />
       <TheCode />
       <GlobalVision />
+      <TwoStories />
       <TheCustomer />
       <TheFuture />
       <Manifesto />

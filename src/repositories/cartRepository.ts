@@ -46,6 +46,11 @@ async function buildCart(cartId: string): Promise<Cart> {
     imagesByProduct.set(row.product_id, existing);
   }
 
+  const brandIds = [...new Set((productRows ?? []).map((p) => p.brand_id).filter((id): id is string => id !== null))];
+  const { data: brandRows, error: brandsError } = await supabase.from('brands').select('id, name, slug').in('id', brandIds);
+  if (brandsError) throw brandsError;
+  const brandById = new Map((brandRows ?? []).map((b) => [b.id, b]));
+
   const productById = new Map(productRows?.map((p) => [p.id, p]));
   const variantById = new Map(variantRows?.map((v) => [v.id, v]));
 
@@ -54,7 +59,8 @@ async function buildCart(cartId: string): Promise<Cart> {
     const productRow = variantRow ? productById.get(variantRow.product_id) : undefined;
     if (!variantRow || !productRow) return [];
 
-    const product = mapProduct(productRow, [variantRow], imagesByProduct.get(productRow.id) ?? [], cartRow.currency);
+    const brand = productRow.brand_id ? (brandById.get(productRow.brand_id) ?? null) : null;
+    const product = mapProduct(productRow, [variantRow], imagesByProduct.get(productRow.id) ?? [], cartRow.currency, brand);
     const variant = product.variants[0];
     if (!variant) return [];
 
