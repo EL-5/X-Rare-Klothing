@@ -201,6 +201,27 @@ export interface InventoryLevel {
 
 export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 
+export type FaqCategory = 'orders' | 'shipping' | 'returns_exchanges' | 'products_sizing' | 'payments' | 'account' | 'collaborations';
+
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+  category: FaqCategory;
+  slug: string;
+  sortOrder: number;
+  isPublished: boolean;
+}
+
+export interface FaqInput {
+  question: string;
+  answer: string;
+  category: FaqCategory;
+  slug: string;
+  sortOrder?: number;
+  isPublished?: boolean;
+}
+
 export interface ReviewImage {
   id: string;
   url: string;

@@ -62,6 +62,7 @@ const AdminCustomerDetail = lazy(() =>
 const AdminDiscounts = lazy(() => import('@/pages/admin/AdminDiscounts').then((m) => ({ default: m.AdminDiscounts })));
 const AdminReviews = lazy(() => import('@/pages/admin/AdminReviews').then((m) => ({ default: m.AdminReviews })));
 const AdminContent = lazy(() => import('@/pages/admin/AdminContent').then((m) => ({ default: m.AdminContent })));
+const AdminFAQs = lazy(() => import('@/pages/admin/AdminFAQs').then((m) => ({ default: m.AdminFAQs })));
 const AdminHomepage = lazy(() => import('@/pages/admin/AdminHomepage').then((m) => ({ default: m.AdminHomepage })));
 const AdminNotifications = lazy(() =>
   import('@/pages/admin/AdminNotifications').then((m) => ({ default: m.AdminNotifications })),
@@ -130,6 +131,7 @@ export default function App() {
                   <Route path="categories" element={<AdminCategories />} />
                   <Route path="reviews" element={<AdminReviews />} />
                   <Route path="content" element={<AdminContent />} />
+                  <Route path="faqs" element={<AdminFAQs />} />
                   <Route path="homepage" element={<AdminHomepage />} />
                 </Route>
 

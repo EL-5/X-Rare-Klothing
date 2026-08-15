@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   Mail,
   MessageSquare,
+  HelpCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { AdminRole } from '@/types/domain';
@@ -50,6 +51,7 @@ export const adminNavItems: AdminNavItem[] = [
   },
   { label: 'Reviews', href: '/admin/reviews', icon: Star, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Content', href: '/admin/content', icon: FileText, roles: ['content_manager', 'admin', 'super_admin'] },
+  { label: 'FAQs', href: '/admin/faqs', icon: HelpCircle, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Homepage', href: '/admin/homepage', icon: LayoutTemplate, roles: ['content_manager', 'admin', 'super_admin'] },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart3, roles: ['order_manager', 'admin', 'super_admin'] },
   { label: 'Settings', href: '/admin/settings', icon: Settings, roles: ['admin', 'super_admin'] },
@@ -70,6 +72,7 @@ export const adminRouteLabels: Record<string, string> = {
   'contact-submissions': 'Contact Submissions',
   reviews: 'Reviews',
   content: 'Content',
+  faqs: 'FAQs',
   homepage: 'Homepage',
   analytics: 'Analytics',
   settings: 'Settings',

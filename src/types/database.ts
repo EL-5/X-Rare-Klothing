@@ -59,6 +59,7 @@ export type PaymentStatus =
 export type DiscountKind = 'percentage' | 'fixed_amount' | 'free_shipping';
 export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'hidden';
 export type ContentStatus = 'draft' | 'published' | 'archived';
+export type FaqCategory = 'orders' | 'shipping' | 'returns_exchanges' | 'products_sizing' | 'payments' | 'account' | 'collaborations';
 export type NewsletterSubscriberStatus = 'subscribed' | 'unsubscribed';
 export type HomepageSectionType = 'hero' | 'product_carousel' | 'banner' | 'editorial' | 'category_grid' | 'newsletter';
 export type NotificationType =
@@ -483,6 +484,18 @@ export type NewsletterSubscriberRow = {
   unsubscribed_at: string | null;
 };
 
+export type FaqRow = {
+  id: string;
+  question: string;
+  answer: string;
+  category: FaqCategory;
+  slug: string;
+  sort_order: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type PageRow = {
   id: string;
   slug: string;
@@ -632,6 +645,7 @@ export type Database = {
       tax_rates: Table<TaxRateRow, 'country_code' | 'rate'>;
       contact_submissions: Table<ContactSubmissionRow, 'first_name' | 'last_name' | 'email' | 'message'>;
       newsletter_subscribers: Table<NewsletterSubscriberRow, 'email'>;
+      faqs: Table<FaqRow, 'question' | 'answer' | 'category' | 'slug'>;
       pages: Table<PageRow, 'slug' | 'title'>;
       blog_posts: Table<BlogPostRow, 'slug' | 'title'>;
       homepage_sections: Table<HomepageSectionRow, 'type' | 'title'>;
