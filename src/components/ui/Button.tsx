@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/cn';
 
-export type ButtonVariant = 'solid' | 'outline' | 'ghost';
+export type ButtonVariant = 'solid' | 'outline' | 'outline-inverse' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonVariantProps {
@@ -19,6 +19,8 @@ const baseClassNames =
 const variantClassNames: Record<ButtonVariant, string> = {
   solid: 'bg-ink text-surface hover:bg-ink/90',
   outline: 'border border-ink text-ink hover:bg-ink hover:text-surface',
+  /** Same as `outline`, but for a dark background (e.g. the footer) — its own explicit class set, not `outline` fought via a `className` override. */
+  'outline-inverse': 'border border-footer-foreground text-footer-foreground hover:bg-footer-foreground hover:text-footer',
   ghost: 'text-ink hover:bg-surface-muted',
 };
 

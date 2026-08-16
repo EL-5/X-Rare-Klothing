@@ -47,7 +47,8 @@ export function Newsletter({
           placeholder="Name"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="bg-transparent text-footer-foreground placeholder:text-footer-foreground/50"
+          tone="dark"
+          containerClassName="min-w-0 flex-1"
         />
         <Input
           type="email"
@@ -55,9 +56,10 @@ export function Newsletter({
           placeholder="Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="bg-transparent text-footer-foreground placeholder:text-footer-foreground/50"
+          tone="dark"
+          containerClassName="min-w-0 flex-1"
         />
-        <Button type="submit" variant="outline" isLoading={isSubmitting} className="shrink-0 border-footer-foreground text-footer-foreground hover:bg-footer-foreground hover:text-footer">
+        <Button type="submit" variant="outline-inverse" isLoading={isSubmitting} className="shrink-0">
           Sign up
         </Button>
       </form>
