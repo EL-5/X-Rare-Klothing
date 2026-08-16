@@ -226,8 +226,8 @@ export function AdminContent() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {items.map((item) => (
-                <AdminTr key={item.id}>
+              {items.map((item, index) => (
+                <AdminTr key={item.id} index={index}>
                   <AdminTd>
                     <button
                       type="button"

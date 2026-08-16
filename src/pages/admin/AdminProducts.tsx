@@ -114,8 +114,8 @@ export function AdminProducts() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {products.map((product) => (
-                <AdminTr key={product.id} className="cursor-pointer" onClick={() => navigate(`/admin/products/${product.id}`)}>
+              {products.map((product, index) => (
+                <AdminTr key={product.id} index={index} className="cursor-pointer" onClick={() => navigate(`/admin/products/${product.id}`)}>
                   <AdminTd>
                     <Link to={`/admin/products/${product.id}`} className="font-medium text-slate-900 hover:text-indigo-600" onClick={(e) => e.stopPropagation()}>
                       {product.title}

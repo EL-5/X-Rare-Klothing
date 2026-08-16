@@ -194,8 +194,8 @@ export function AdminCategories() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {orderedWithDepth().map(({ category, depth }) => (
-                <AdminTr key={category.id}>
+              {orderedWithDepth().map(({ category, depth }, index) => (
+                <AdminTr key={category.id} index={index}>
                   <AdminTd>
                     {category.image ? (
                       <img src={category.image} alt="" className="h-10 w-10 rounded-md object-cover" />

@@ -107,8 +107,8 @@ export function AdminUsers() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {assignments.map((assignment) => (
-                <AdminTr key={assignment.id}>
+              {assignments.map((assignment, index) => (
+                <AdminTr key={assignment.id} index={index}>
                   <AdminTd className="font-mono text-xs">{assignment.userId}</AdminTd>
                   <AdminTd className="capitalize">{assignment.role.replace('_', ' ')}</AdminTd>
                   <AdminTd className="text-slate-500">{new Date(assignment.createdAt).toLocaleDateString()}</AdminTd>

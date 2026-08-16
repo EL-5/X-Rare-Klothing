@@ -78,8 +78,8 @@ export function AdminContactSubmissions() {
         <AdminEmptyState title="No messages here" description="Nothing matches this filter right now." />
       ) : (
         <div className="flex flex-col gap-3">
-          {submissions.map((submission) => (
-            <AdminCard key={submission.id}>
+          {submissions.map((submission, index) => (
+            <AdminCard key={submission.id} index={index}>
               <AdminCardBody>
                 <div className="flex items-start justify-between gap-4">
                   <div>

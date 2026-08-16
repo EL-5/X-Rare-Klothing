@@ -108,8 +108,8 @@ export function AdminOrders() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {orders.map((order) => (
-                <AdminTr key={order.id} className="cursor-pointer" onClick={() => navigate(`/admin/orders/${order.id}`)}>
+              {orders.map((order, index) => (
+                <AdminTr key={order.id} index={index} className="cursor-pointer" onClick={() => navigate(`/admin/orders/${order.id}`)}>
                   <AdminTd>
                     <Link to={`/admin/orders/${order.id}`} className="font-medium text-slate-900 hover:text-indigo-600" onClick={(e) => e.stopPropagation()}>
                       {order.orderNumber}

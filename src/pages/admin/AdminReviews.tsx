@@ -84,8 +84,8 @@ export function AdminReviews() {
         <AdminEmptyState title="No reviews here" description="Nothing matches this filter right now." />
       ) : (
         <div className="flex flex-col gap-3">
-          {reviews.map((review) => (
-            <AdminCard key={review.id}>
+          {reviews.map((review, index) => (
+            <AdminCard key={review.id} index={index}>
               <AdminCardBody>
                 <div className="flex items-start justify-between gap-4">
                   <div>

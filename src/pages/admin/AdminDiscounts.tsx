@@ -344,8 +344,8 @@ export function AdminDiscounts() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {discounts.map((discount) => (
-                <AdminTr key={discount.id}>
+              {discounts.map((discount, index) => (
+                <AdminTr key={discount.id} index={index}>
                   <AdminTd>
                     <button type="button" onClick={() => startEdit(discount)} className="font-medium text-slate-900 hover:text-indigo-600">
                       {discount.name}

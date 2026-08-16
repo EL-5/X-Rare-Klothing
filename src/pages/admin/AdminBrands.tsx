@@ -184,8 +184,8 @@ export function AdminBrands() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {brands.map((brand) => (
-                <AdminTr key={brand.id}>
+              {brands.map((brand, index) => (
+                <AdminTr key={brand.id} index={index}>
                   <AdminTd>
                     <button type="button" onClick={() => startEdit(brand)} className="font-medium text-slate-900 hover:text-indigo-600">
                       {brand.name}

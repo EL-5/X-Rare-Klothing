@@ -70,8 +70,8 @@ export function AdminCustomers() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {customers.map((customer) => (
-                <AdminTr key={customer.id} className="cursor-pointer" onClick={() => navigate(`/admin/customers/${customer.id}`)}>
+              {customers.map((customer, index) => (
+                <AdminTr key={customer.id} index={index} className="cursor-pointer" onClick={() => navigate(`/admin/customers/${customer.id}`)}>
                   <AdminTd>
                     <Link to={`/admin/customers/${customer.id}`} className="font-medium text-slate-900 hover:text-indigo-600" onClick={(e) => e.stopPropagation()}>
                       {[customer.firstName, customer.lastName].filter(Boolean).join(' ') || '—'}

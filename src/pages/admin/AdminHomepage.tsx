@@ -433,7 +433,7 @@ export function AdminHomepage() {
       ) : (
         <div className="flex flex-col gap-3">
           {sections.map((section, index) => (
-            <AdminCard key={section.id}>
+            <AdminCard key={section.id} index={index}>
               <AdminCardBody className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col">

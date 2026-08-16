@@ -123,8 +123,8 @@ export function AdminInventory() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {pageRows?.map((row) => (
-                <AdminTr key={row.variantId}>
+              {pageRows?.map((row, index) => (
+                <AdminTr key={row.variantId} index={index}>
                   <AdminTd className="font-medium text-slate-900">{row.productName}</AdminTd>
                   <AdminTd className="text-slate-500">{row.variantSku}</AdminTd>
                   <AdminTd>{row.onHand}</AdminTd>

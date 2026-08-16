@@ -190,7 +190,7 @@ export function AdminFAQs() {
               <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{FAQ_CATEGORY_LABELS[category]}</h2>
               <div className="flex flex-col gap-2">
                 {items.map((faq, index) => (
-                  <AdminCard key={faq.id}>
+                  <AdminCard key={faq.id} index={index}>
                     <AdminCardBody className="flex items-center justify-between gap-4">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">

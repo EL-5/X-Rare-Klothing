@@ -186,8 +186,8 @@ export function AdminCollections() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {collections.map((collection) => (
-                <AdminTr key={collection.id}>
+              {collections.map((collection, index) => (
+                <AdminTr key={collection.id} index={index}>
                   <AdminTd>
                     <button type="button" onClick={() => startEdit(collection)} className="font-medium text-slate-900 hover:text-indigo-600">
                       {collection.title}

@@ -117,8 +117,8 @@ export function AdminNotifications() {
               </tr>
             </AdminTHead>
             <AdminTBody>
-              {result.items.map((notification) => (
-                <AdminTr key={notification.id}>
+              {result.items.map((notification, index) => (
+                <AdminTr key={notification.id} index={index}>
                   <AdminTd className="font-mono text-xs">{notification.recipientEmail}</AdminTd>
                   <AdminTd className="text-slate-600">{TYPE_LABELS[notification.type]}</AdminTd>
                   <AdminTd>
