@@ -41,25 +41,27 @@ export function Newsletter({
     <div>
       <h3 className="text-sm font-semibold uppercase tracking-wide">{heading}</h3>
       <p className="mt-1 text-xs text-footer-foreground/70">{incentive}</p>
-      <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <Input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          tone="dark"
-          containerClassName="min-w-0 flex-1"
-        />
-        <Input
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          tone="dark"
-          containerClassName="min-w-0 flex-1"
-        />
-        <Button type="submit" variant="outline-inverse" isLoading={isSubmitting} className="shrink-0">
+      <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            tone="dark"
+            containerClassName="min-w-0 flex-1"
+          />
+          <Input
+            type="email"
+            required
+            placeholder="Email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            tone="dark"
+            containerClassName="min-w-0 flex-1"
+          />
+        </div>
+        <Button type="submit" variant="outline-inverse" isLoading={isSubmitting} className="w-full">
           Sign up
         </Button>
       </form>
