@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/stores/AuthStore';
 import { useCart } from '@/stores/CartStore';
 import { wishlistService } from '@/services/wishlistService';
@@ -16,6 +17,7 @@ export function Wishlist() {
   const { show } = useToast();
   const [items, setItems] = useState<WishlistItemWithProduct[] | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const load = async () => {
     if (!profile) return;
@@ -69,8 +71,14 @@ export function Wishlist() {
         </div>
       ) : (
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <div key={item.id} className="flex flex-col">
+          {items.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : Math.min(index, 12) * 0.05 }}
+              className="flex flex-col"
+            >
               {item.product ? (
                 <>
                   <Link to={ROUTES.product(item.product.slug)} className="group relative block aspect-[3/4] w-full overflow-hidden bg-surface-muted">
@@ -123,7 +131,7 @@ export function Wishlist() {
               >
                 Remove
               </button>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}

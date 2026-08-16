@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from 'framer-motion';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import type { Product } from '@/types/domain';
@@ -10,6 +11,8 @@ export interface ProductGridProps {
 
 /** 2-up mobile / 4-up desktop — matches the reference's grid (see docs/design-system.md: "small-up-2 medium-up-4"). */
 export function ProductGrid({ products, isProductInStock, onQuickView }: ProductGridProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   if (products && products.length === 0) {
     return (
       <div className="flex flex-col items-center gap-2 py-24 text-center">
@@ -30,13 +33,19 @@ export function ProductGrid({ products, isProductInStock, onQuickView }: Product
             </div>
           ))
         : products.map((product, index) => (
-            <ProductCard
+            <motion.div
               key={product.id}
-              product={product}
-              priority={index < 4}
-              inStock={isProductInStock ? isProductInStock(product) : undefined}
-              onQuickView={onQuickView}
-            />
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : (index % 8) * 0.05, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <ProductCard
+                product={product}
+                priority={index < 4}
+                inStock={isProductInStock ? isProductInStock(product) : undefined}
+                onQuickView={onQuickView}
+              />
+            </motion.div>
           ))}
     </div>
   );
