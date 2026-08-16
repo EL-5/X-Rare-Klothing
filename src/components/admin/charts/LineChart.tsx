@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from 'framer-motion';
 import type { ChartPoint } from '@/services/dashboardService';
 
 export interface LineChartProps {
@@ -12,6 +13,8 @@ const PADDING = { top: 16, right: 12, bottom: 24, left: 12 };
 
 /** Minimal hand-rolled SVG line chart — no charting library dependency for a handful of simple time series. */
 export function LineChart({ data, formatValue = (v) => String(v), color = '#4F46E5' }: LineChartProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   if (data.length === 0) {
     return <div className="flex h-[220px] items-center justify-center text-sm text-slate-400">No data</div>;
   }
@@ -42,11 +45,32 @@ export function LineChart({ data, formatValue = (v) => String(v), color = '#4F46
         </linearGradient>
       </defs>
 
-      <path d={areaPath} fill="url(#lineChartFill)" />
-      <path d={linePath} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      <motion.path
+        d={areaPath}
+        fill="url(#lineChartFill)"
+        initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      />
+      <motion.path
+        d={linePath}
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        initial={prefersReducedMotion ? undefined : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+      />
 
       {points.map((p, i) => (
-        <g key={i}>
+        <motion.g
+          key={i}
+          initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.8 }}
+        >
           <circle cx={p.x} cy={p.y} r="2.5" fill={color}>
             <title>{`${p.label}: ${formatValue(p.value)}`}</title>
           </circle>
@@ -55,7 +79,7 @@ export function LineChart({ data, formatValue = (v) => String(v), color = '#4F46
               {p.label.slice(5)}
             </text>
           ) : null}
-        </g>
+        </motion.g>
       ))}
     </svg>
   );

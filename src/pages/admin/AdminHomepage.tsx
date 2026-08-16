@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Plus, Trash2, ChevronUp, ChevronDown, Pencil } from 'lucide-react';
 import { AdminPageHeader } from '@/components/admin/ui/AdminPageHeader';
 import { AdminButton } from '@/components/admin/ui/AdminButton';
@@ -136,12 +136,20 @@ export function AdminHomepage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const load = () => homepageSectionService.listAll().then(setSections);
 
   useEffect(() => {
     void load();
   }, []);
+
+  // The form renders above the section list — without this, editing a
+  // section scrolled below the fold silently opens the form off-screen,
+  // which looks exactly like the button doing nothing.
+  useEffect(() => {
+    if (showForm) formRef.current?.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }, [showForm]);
 
   const startCreate = () => {
     setForm(emptyForm);
@@ -231,6 +239,7 @@ export function AdminHomepage() {
       />
 
       {showForm ? (
+        <div ref={formRef}>
         <AdminCard className="mb-6">
           <AdminCardHeader>
             <h2 className="text-sm font-semibold text-slate-900">{editingId ? 'Edit section' : 'New section'}</h2>
@@ -414,6 +423,7 @@ export function AdminHomepage() {
             </form>
           </AdminCardBody>
         </AdminCard>
+        </div>
       ) : null}
 
       {sections === null ? (

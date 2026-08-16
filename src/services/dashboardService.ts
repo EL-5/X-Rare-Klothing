@@ -23,6 +23,27 @@ export interface TopEntry {
   value: number;
 }
 
+export interface FinancialSummary {
+  /** Subtotal minus discounts across revenue-recognized orders — product revenue, excluding shipping/tax. */
+  grossMerchandiseRevenue: Money;
+  discountsGiven: Money;
+  taxCollected: Money;
+  shippingRevenue: Money;
+  /** Approximate: order_items doesn't snapshot cost at time of sale, so this uses each variant's currently-recorded cost. */
+  estimatedCogs: Money;
+  grossProfit: Money;
+  grossMarginPercent: number | null;
+  /** Line items excluded from the COGS estimate because their variant was deleted or has no recorded cost — shown so the estimate isn't presented as more complete than it is. */
+  itemsWithoutCostCount: number;
+}
+
+export interface PeriodComparison {
+  revenueChangePercent: number | null;
+  ordersChangePercent: number | null;
+  averageOrderValueChangePercent: number | null;
+  newCustomersChangePercent: number | null;
+}
+
 export interface DashboardData {
   metrics: DashboardMetrics;
   revenueSeries: ChartPoint[];
@@ -32,6 +53,9 @@ export interface DashboardData {
   ordersByStatus: TopEntry[];
   funnel: TopEntry[];
   customerGrowthSeries: ChartPoint[];
+  financials: FinancialSummary;
+  revenueByProvider: TopEntry[];
+  comparison: PeriodComparison;
 }
 
 /** Order statuses counted as recognized revenue — excludes not-yet-paid and cancelled/refunded orders. */
@@ -56,6 +80,12 @@ function dayKey(iso: string): string {
   return iso.slice(0, 10);
 }
 
+/** Null when the previous period had nothing to compare against (0 → N is not a meaningful percentage). */
+function percentChange(current: number, previous: number): number | null {
+  if (previous === 0) return null;
+  return ((current - previous) / previous) * 100;
+}
+
 export interface DashboardService {
   getDashboardData(startDate: Date, endDate: Date, currency?: string, topLimit?: number): Promise<DashboardData>;
 }
@@ -65,15 +95,25 @@ class SupabaseDashboardService implements DashboardService {
     const startISO = startDate.toISOString();
     const endISO = endDate.toISOString();
 
-    const [orders, newCustomers, pendingOrders, pendingPayments, stockCounts, funnelEvents, newCustomerRows] = await Promise.all([
-      dashboardRepository.getOrdersInRange(startISO, endISO),
-      dashboardRepository.countNewCustomersInRange(startISO, endISO),
-      dashboardRepository.countPendingOrders(),
-      dashboardRepository.countPendingPayments(),
-      dashboardRepository.getStockCounts(),
-      dashboardRepository.getFunnelEventsInRange(startISO, endISO),
-      dashboardRepository.getNewCustomersCreatedAtInRange(startISO, endISO),
-    ]);
+    // Same-length window immediately preceding the selected range — the baseline for the comparison deltas shown on each stat card.
+    const rangeMs = endDate.getTime() - startDate.getTime();
+    const previousEnd = new Date(startDate.getTime() - 1);
+    const previousStart = new Date(previousEnd.getTime() - rangeMs);
+    const previousStartISO = previousStart.toISOString();
+    const previousEndISO = previousEnd.toISOString();
+
+    const [orders, newCustomers, pendingOrders, pendingPayments, stockCounts, funnelEvents, newCustomerRows, previousOrders, previousNewCustomers] =
+      await Promise.all([
+        dashboardRepository.getOrdersInRange(startISO, endISO),
+        dashboardRepository.countNewCustomersInRange(startISO, endISO),
+        dashboardRepository.countPendingOrders(),
+        dashboardRepository.countPendingPayments(),
+        dashboardRepository.getStockCounts(),
+        dashboardRepository.getFunnelEventsInRange(startISO, endISO),
+        dashboardRepository.getNewCustomersCreatedAtInRange(startISO, endISO),
+        dashboardRepository.getOrdersInRange(previousStartISO, previousEndISO),
+        dashboardRepository.countNewCustomersInRange(previousStartISO, previousEndISO),
+      ]);
 
     const revenueOrders = orders.filter((o) => REVENUE_STATUSES.has(o.status));
     const revenueCents = revenueOrders.reduce((sum, o) => sum + o.total_cents, 0);
@@ -131,6 +171,60 @@ class SupabaseDashboardService implements DashboardService {
       .slice(0, topLimit)
       .map(([name, cents]) => ({ name, value: cents / 100 }));
 
+    // Financial depth: merchandise revenue after discounts, tax/shipping collected,
+    // an estimated COGS/margin from each variant's currently-recorded cost (staff-only,
+    // masked to null for anyone else by the RPC itself), and revenue by payment provider.
+    const grossMerchandiseCents = revenueOrders.reduce((sum, o) => sum + (o.subtotal_cents - o.discount_cents), 0);
+    const discountsCents = revenueOrders.reduce((sum, o) => sum + o.discount_cents, 0);
+    const taxCents = revenueOrders.reduce((sum, o) => sum + o.tax_cents, 0);
+    const shippingCents = revenueOrders.reduce((sum, o) => sum + o.shipping_cents, 0);
+
+    const variantIds = [...new Set(items.map((i) => i.variant_id).filter((id): id is string => Boolean(id)))];
+    const costByVariant = await dashboardRepository.getVariantCosts(variantIds);
+    let cogsCents = 0;
+    let itemsWithoutCostCount = 0;
+    for (const item of items) {
+      const cost = item.variant_id ? costByVariant.get(item.variant_id) : null;
+      if (cost === null || cost === undefined) {
+        itemsWithoutCostCount += 1;
+        continue;
+      }
+      cogsCents += cost * item.quantity;
+    }
+    const grossProfitCents = grossMerchandiseCents - cogsCents;
+
+    const payments = await dashboardRepository.getPaymentsForOrders(revenueOrderIds);
+    const revenueByProviderCents = new Map<string, number>();
+    for (const payment of payments) {
+      if (payment.status !== 'paid') continue;
+      revenueByProviderCents.set(payment.provider, (revenueByProviderCents.get(payment.provider) ?? 0) + payment.amount_cents);
+    }
+    const revenueByProvider: TopEntry[] = [...revenueByProviderCents.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, cents]) => ({ name, value: cents / 100 }));
+
+    const financials: FinancialSummary = {
+      grossMerchandiseRevenue: { cents: grossMerchandiseCents, currency },
+      discountsGiven: { cents: discountsCents, currency },
+      taxCollected: { cents: taxCents, currency },
+      shippingRevenue: { cents: shippingCents, currency },
+      estimatedCogs: { cents: cogsCents, currency },
+      grossProfit: { cents: grossProfitCents, currency },
+      grossMarginPercent: grossMerchandiseCents > 0 ? (grossProfitCents / grossMerchandiseCents) * 100 : null,
+      itemsWithoutCostCount,
+    };
+
+    // Period-over-period comparison — previous window's headline numbers only, not the full breakdown.
+    const previousRevenueOrders = previousOrders.filter((o) => REVENUE_STATUSES.has(o.status));
+    const previousRevenueCents = previousRevenueOrders.reduce((sum, o) => sum + o.total_cents, 0);
+    const previousAverageOrderCents = previousRevenueOrders.length > 0 ? Math.round(previousRevenueCents / previousRevenueOrders.length) : 0;
+    const comparison: PeriodComparison = {
+      revenueChangePercent: percentChange(revenueCents, previousRevenueCents),
+      ordersChangePercent: percentChange(ordersCount, previousOrders.length),
+      averageOrderValueChangePercent: percentChange(averageOrderCents, previousAverageOrderCents),
+      newCustomersChangePercent: percentChange(newCustomers, previousNewCustomers),
+    };
+
     const countByStatus = new Map<string, number>();
     for (const order of orders) {
       countByStatus.set(order.status, (countByStatus.get(order.status) ?? 0) + 1);
@@ -176,6 +270,9 @@ class SupabaseDashboardService implements DashboardService {
       ordersByStatus,
       funnel,
       customerGrowthSeries,
+      financials,
+      revenueByProvider,
+      comparison,
     };
   }
 }

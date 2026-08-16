@@ -3,6 +3,10 @@ import { supabase } from '@/lib/supabase';
 export interface DashboardOrderRow {
   id: string;
   status: string;
+  subtotal_cents: number;
+  discount_cents: number;
+  shipping_cents: number;
+  tax_cents: number;
   total_cents: number;
   placed_at: string;
 }
@@ -10,9 +14,17 @@ export interface DashboardOrderRow {
 export interface DashboardOrderItemRow {
   order_id: string;
   product_id: string | null;
+  variant_id: string | null;
   product_name: string;
   quantity: number;
   total_cents: number;
+}
+
+export interface DashboardPaymentRow {
+  order_id: string;
+  provider: string;
+  status: string;
+  amount_cents: number;
 }
 
 /**
@@ -26,7 +38,7 @@ export const dashboardRepository = {
   async getOrdersInRange(startISO: string, endISO: string): Promise<DashboardOrderRow[]> {
     const { data, error } = await supabase
       .from('orders')
-      .select('id, status, total_cents, placed_at')
+      .select('id, status, subtotal_cents, discount_cents, shipping_cents, tax_cents, total_cents, placed_at')
       .gte('placed_at', startISO)
       .lte('placed_at', endISO);
     if (error) throw error;
@@ -37,8 +49,24 @@ export const dashboardRepository = {
     if (orderIds.length === 0) return [];
     const { data, error } = await supabase
       .from('order_items')
-      .select('order_id, product_id, product_name, quantity, total_cents')
+      .select('order_id, product_id, variant_id, product_name, quantity, total_cents')
       .in('order_id', orderIds);
+    if (error) throw error;
+    return data ?? [];
+  },
+
+  /** Wholesale cost per variant, staff-only (masked to null for non-staff by the RPC itself — see 0041). Used to estimate gross margin; approximate since order_items doesn't snapshot cost at time of sale, only the variant's current recorded cost. */
+  async getVariantCosts(variantIds: string[]): Promise<Map<string, number | null>> {
+    const ids = [...new Set(variantIds)];
+    if (ids.length === 0) return new Map();
+    const { data, error } = await supabase.rpc('variants_by_ids', { _ids: ids });
+    if (error) throw error;
+    return new Map((data ?? []).map((v) => [v.id, v.cost_cents]));
+  },
+
+  async getPaymentsForOrders(orderIds: string[]): Promise<DashboardPaymentRow[]> {
+    if (orderIds.length === 0) return [];
+    const { data, error } = await supabase.from('payments').select('order_id, provider, status, amount_cents').in('order_id', orderIds);
     if (error) throw error;
     return data ?? [];
   },
