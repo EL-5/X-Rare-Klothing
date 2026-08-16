@@ -22,6 +22,8 @@ import { StatCard } from '@/components/admin/dashboard/StatCard';
 import { DateRangeFilter, rangeForPreset, type DateRange } from '@/components/admin/dashboard/DateRangeFilter';
 import { LineChart } from '@/components/admin/charts/LineChart';
 import { BarChart } from '@/components/admin/charts/BarChart';
+import { VerticalBarChart } from '@/components/admin/charts/VerticalBarChart';
+import { DonutChart } from '@/components/admin/charts/DonutChart';
 import { dashboardService, type DashboardData } from '@/services/dashboardService';
 import { formatMoney } from '@/utils/money';
 
@@ -162,7 +164,7 @@ export function AdminDashboard() {
                 <h2 className="text-sm font-semibold text-slate-900">Orders</h2>
               </AdminCardHeader>
               <AdminCardBody>
-                <LineChart data={data.ordersSeries} color="#0EA5E9" />
+                <VerticalBarChart data={data.ordersSeries} color="#0EA5E9" />
               </AdminCardBody>
             </AdminCard>
 
@@ -189,7 +191,7 @@ export function AdminDashboard() {
                 <h2 className="text-sm font-semibold text-slate-900">Revenue by payment method</h2>
               </AdminCardHeader>
               <AdminCardBody>
-                <BarChart data={data.revenueByProvider} formatValue={(v) => `$${v.toFixed(0)}`} color="#16A34A" />
+                <DonutChart data={data.revenueByProvider} formatValue={(v) => `$${v.toFixed(0)}`} centerLabel="Revenue" />
               </AdminCardBody>
             </AdminCard>
           </motion.div>

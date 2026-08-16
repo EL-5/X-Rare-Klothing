@@ -9,7 +9,25 @@ import { StatCard } from '@/components/admin/dashboard/StatCard';
 import { DateRangeFilter, rangeForPreset, type DateRange } from '@/components/admin/dashboard/DateRangeFilter';
 import { LineChart } from '@/components/admin/charts/LineChart';
 import { BarChart } from '@/components/admin/charts/BarChart';
+import { VerticalBarChart } from '@/components/admin/charts/VerticalBarChart';
+import { DonutChart } from '@/components/admin/charts/DonutChart';
+import { FunnelChart } from '@/components/admin/charts/FunnelChart';
 import { dashboardService, type DashboardData } from '@/services/dashboardService';
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: '#D97706',
+  'payment pending': '#D97706',
+  'awaiting payment': '#D97706',
+  paid: '#16A34A',
+  processing: '#0EA5E9',
+  'ready for shipping': '#4F46E5',
+  shipped: '#4F46E5',
+  delivered: '#0D9488',
+  cancelled: '#64748B',
+  refunded: '#DC2626',
+  'partially refunded': '#EA580C',
+};
+const statusColor = (name: string) => STATUS_COLORS[name] ?? '#64748B';
 import { formatMoney } from '@/utils/money';
 
 export function AdminAnalytics() {
@@ -96,7 +114,7 @@ export function AdminAnalytics() {
                 <p className="text-xs text-slate-500">Distinct sessions reaching each stage in range.</p>
               </AdminCardHeader>
               <AdminCardBody>
-                <BarChart data={data.funnel} color="#7C3AED" />
+                <FunnelChart data={data.funnel} />
               </AdminCardBody>
             </AdminCard>
 
@@ -106,7 +124,7 @@ export function AdminAnalytics() {
                 <p className="text-xs text-slate-500">New accounts created per day.</p>
               </AdminCardHeader>
               <AdminCardBody>
-                <LineChart data={data.customerGrowthSeries} />
+                <VerticalBarChart data={data.customerGrowthSeries} color="#0D9488" />
               </AdminCardBody>
             </AdminCard>
 
@@ -133,7 +151,7 @@ export function AdminAnalytics() {
                 <h2 className="text-sm font-semibold text-slate-900">Revenue by payment method</h2>
               </AdminCardHeader>
               <AdminCardBody>
-                <BarChart data={data.revenueByProvider} formatValue={(v) => `$${v.toFixed(0)}`} color="#16A34A" />
+                <DonutChart data={data.revenueByProvider} formatValue={(v) => `$${v.toFixed(0)}`} centerLabel="Revenue" />
               </AdminCardBody>
             </AdminCard>
 
@@ -142,7 +160,7 @@ export function AdminAnalytics() {
                 <h2 className="text-sm font-semibold text-slate-900">Orders by status</h2>
               </AdminCardHeader>
               <AdminCardBody>
-                <BarChart data={data.ordersByStatus} color="#16A34A" />
+                <DonutChart data={data.ordersByStatus} colors={data.ordersByStatus.map((s) => statusColor(s.name))} centerLabel="Orders" />
               </AdminCardBody>
             </AdminCard>
           </motion.div>
