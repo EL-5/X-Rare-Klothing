@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Drawer } from '@/components/ui/Drawer';
 import { buttonClassNames } from '@/components/ui/Button';
@@ -20,6 +21,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [discountInput, setDiscountInput] = useState('');
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const handleApplyDiscount = async (event: FormEvent) => {
     event.preventDefault();
@@ -83,9 +85,19 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           </div>
 
           <ul className="flex-1 divide-y divide-border overflow-y-auto px-6">
-            {cart.items.map((item) => (
-              <li key={item.id} className="flex gap-4 py-4">
-                <div className="h-20 w-16 shrink-0 bg-surface-muted" />
+            {cart.items.map((item, index) => (
+              <motion.li
+                key={item.id}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : Math.min(index, 10) * 0.05 }}
+                className="flex gap-4 py-4"
+              >
+                <div className="h-20 w-16 shrink-0 overflow-hidden bg-surface-muted">
+                  {item.product.images[0] ? (
+                    <img src={item.product.images[0]} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  ) : null}
+                </div>
                 <div className="flex flex-1 flex-col gap-1">
                   <p className="text-sm font-medium text-ink">{item.product.title}</p>
                   <p className="text-xs text-ink/60">
@@ -121,7 +133,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     Remove
                   </button>
                 </div>
-              </li>
+              </motion.li>
             ))}
           </ul>
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronDown, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -78,6 +79,7 @@ function addressToForm(address: Address): AddressForm {
  */
 export function Checkout() {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
   const { cart, isLoading: isCartLoading, applyDiscountCode, removeDiscountCode, refresh: refreshCart } = useCart();
   const { isAuthenticated, profile } = useAuth();
 
@@ -442,9 +444,12 @@ export function Checkout() {
               {eligibleRates.length === 0 ? (
                 <p className="text-sm text-ink/60">Enter your address to see shipping options.</p>
               ) : (
-                eligibleRates.map((rate) => (
-                  <label
+                eligibleRates.map((rate, index) => (
+                  <motion.label
                     key={rate.id}
+                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: prefersReducedMotion ? 0 : index * 0.05 }}
                     className={`flex cursor-pointer items-center justify-between rounded-[var(--radius-input)] border px-4 py-3 text-sm transition-colors ${
                       selectedShippingMethodId === rate.id ? 'border-ink' : 'border-border'
                     }`}
@@ -460,7 +465,7 @@ export function Checkout() {
                       {rate.name}
                     </span>
                     <span className="text-ink">{rate.price.cents === 0 ? 'Free' : formatMoney(rate.price)}</span>
-                  </label>
+                  </motion.label>
                 ))
               )}
             </div>

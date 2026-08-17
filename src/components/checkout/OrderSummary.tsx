@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from 'framer-motion';
 import { formatMoney } from '@/utils/money';
 import type { Cart, Money } from '@/types/domain';
 
@@ -10,14 +11,21 @@ export interface OrderSummaryProps {
 }
 
 export function OrderSummary({ cart, shippingOverride, taxOverride, totalOverride }: OrderSummaryProps) {
+  const prefersReducedMotion = useReducedMotion();
   const shipping = shippingOverride !== undefined ? shippingOverride : cart.shippingEstimate;
   const tax = taxOverride !== undefined ? taxOverride : cart.taxEstimate;
   const total = totalOverride ?? cart.total;
   return (
     <div className="flex flex-col gap-6">
       <ul className="flex flex-col gap-4">
-        {cart.items.map((item) => (
-          <li key={item.id} className="flex gap-3">
+        {cart.items.map((item, index) => (
+          <motion.li
+            key={item.id}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : Math.min(index, 10) * 0.05 }}
+            className="flex gap-3"
+          >
             <div className="relative h-16 w-14 shrink-0 bg-surface-muted">
               {item.product.images[0] ? (
                 <img src={item.product.images[0]} alt="" loading="lazy" className="h-full w-full object-cover" />
@@ -31,7 +39,7 @@ export function OrderSummary({ cart, shippingOverride, taxOverride, totalOverrid
               <p className="text-xs text-ink/60">{[item.variant.color, item.variant.size].filter(Boolean).join(' / ')}</p>
             </div>
             <p className="text-sm text-ink">{formatMoney(item.lineTotal)}</p>
-          </li>
+          </motion.li>
         ))}
       </ul>
 
