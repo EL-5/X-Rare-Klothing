@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/stores/AuthStore';
 import { addressService } from '@/services/addressService';
 import { useToast } from '@/stores/ToastStore';
@@ -30,6 +31,7 @@ export function Addresses() {
   const [editingId, setEditingId] = useState<string | 'new' | null>(null);
   const [form, setForm] = useState<AddressInput>(emptyForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const load = async () => {
     if (!profile) return;
@@ -134,8 +136,14 @@ export function Addresses() {
         <p className="mt-6 text-sm text-ink/60">No saved addresses yet.</p>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {addresses.map((address) => (
-            <div key={address.id} className="border border-border p-4 text-sm">
+          {addresses.map((address, index) => (
+            <motion.div
+              key={address.id}
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : index * 0.06 }}
+              className="border border-border p-4 text-sm"
+            >
               {address.isDefault ? (
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/60">Default {address.type}</p>
               ) : null}
@@ -157,7 +165,7 @@ export function Addresses() {
                   Remove
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { orderService } from '@/services/orderService';
 import { formatMoney } from '@/utils/money';
 import { ROUTES } from '@/config/routes';
@@ -41,6 +42,7 @@ const SHIPPING_STATUS: Record<OrderStatus, { label: string; variant: BadgeVarian
 export function OrderDetail() {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (!id) return;
@@ -110,16 +112,24 @@ export function OrderDetail() {
       </div>
 
       <ul className="mt-6 flex flex-col divide-y divide-border border-y border-border">
-        {order.items.map((item) => (
-          <li key={item.id} className="flex items-center gap-4 py-4">
-            <div className="h-16 w-12 shrink-0 bg-surface-muted" />
+        {order.items.map((item, index) => (
+          <motion.li
+            key={item.id}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : Math.min(index, 10) * 0.05 }}
+            className="flex items-center gap-4 py-4"
+          >
+            <div className="h-16 w-12 shrink-0 overflow-hidden bg-surface-muted">
+              {item.imageUrl ? <img src={item.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" /> : null}
+            </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-ink">{item.productName}</p>
               {item.variantTitle ? <p className="text-xs text-ink/60">{item.variantTitle}</p> : null}
               <p className="text-xs text-ink/60">Qty {item.quantity}</p>
             </div>
             <p className="text-sm font-medium text-ink">{formatMoney(item.total)}</p>
-          </li>
+          </motion.li>
         ))}
       </ul>
 
