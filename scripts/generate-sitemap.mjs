@@ -30,7 +30,7 @@ const SITE_URL = process.env.SITE_URL || 'https://x-rare-klothing.example';
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
 
-const STATIC_PATHS = ['/', '/shop', '/collections', '/about', '/faq', '/contact'];
+const STATIC_PATHS = ['/', '/shop', '/collections', '/brands', '/about', '/faq', '/contact'];
 
 function urlEntry(path, lastmod) {
   return `  <url>\n    <loc>${SITE_URL}${path}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n  </url>`;
@@ -42,15 +42,23 @@ async function main() {
   if (SUPABASE_URL && SUPABASE_ANON_KEY) {
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const [{ data: products }, { data: categories }, { data: collections }] = await Promise.all([
+    const [{ data: products }, { data: categories }, { data: collections }, { data: brands }, { data: pages }] = await Promise.all([
       supabase.from('products').select('slug, updated_at').eq('status', 'active'),
       supabase.from('categories').select('slug'),
       supabase.from('collections').select('slug, updated_at').eq('is_published', true),
+      supabase.from('brands').select('slug'),
+      // Public CMS pages (Privacy Policy, Terms of Service, Shipping &
+      // Returns, and anything else added later via /admin → Content → Pages)
+      // — reads whatever's published, so a new page shows up here on the
+      // next build with no script changes needed.
+      supabase.from('pages').select('slug, updated_at').eq('status', 'published'),
     ]);
 
     for (const p of products ?? []) paths.push([`/products/${p.slug}`, p.updated_at]);
     for (const c of categories ?? []) paths.push([`/category/${c.slug}`]);
     for (const c of collections ?? []) paths.push([`/collections/${c.slug}`, c.updated_at]);
+    for (const b of brands ?? []) paths.push([`/brands/${b.slug}`]);
+    for (const p of pages ?? []) paths.push([`/pages/${p.slug}`, p.updated_at]);
   } else {
     console.warn('[sitemap] VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY not set — generating static-routes-only sitemap.');
   }
@@ -61,6 +69,23 @@ async function main() {
 
   writeFileSync(new URL('../public/sitemap.xml', import.meta.url), xml);
   console.log(`[sitemap] wrote ${paths.length} URLs to public/sitemap.xml`);
+
+  // robots.txt's Sitemap: line needs the same real domain, or it points
+  // crawlers at the placeholder even once sitemap.xml itself has real URLs —
+  // regenerated here from the same SITE_URL so the two can't drift apart.
+  const robots = `User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /checkout
+Disallow: /search
+Disallow: /reset-password
+Disallow: /auth/callback
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`;
+  writeFileSync(new URL('../public/robots.txt', import.meta.url), robots);
+  console.log(`[sitemap] wrote public/robots.txt (Sitemap: ${SITE_URL}/sitemap.xml)`);
 }
 
 main().catch((err) => {

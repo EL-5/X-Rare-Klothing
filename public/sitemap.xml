@@ -10,6 +10,9 @@
     <loc>https://x-rare-klothing.example/collections</loc>
   </url>
   <url>
+    <loc>https://x-rare-klothing.example/brands</loc>
+  </url>
+  <url>
     <loc>https://x-rare-klothing.example/about</loc>
   </url>
   <url>
@@ -1338,5 +1341,20 @@
   <url>
     <loc>https://x-rare-klothing.example/collections/featured</loc>
     <lastmod>2026-08-15T00:12:54.752775+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://x-rare-klothing.example/brands/x-rare</loc>
+  </url>
+  <url>
+    <loc>https://x-rare-klothing.example/pages/privacy-policy</loc>
+    <lastmod>2026-08-17T01:10:55.458721+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://x-rare-klothing.example/pages/shipping-returns</loc>
+    <lastmod>2026-08-17T01:10:55.458721+00:00</lastmod>
+  </url>
+  <url>
+    <loc>https://x-rare-klothing.example/pages/terms-of-service</loc>
+    <lastmod>2026-08-17T01:10:55.458721+00:00</lastmod>
   </url>
 </urlset>
