@@ -8,6 +8,7 @@ import {
 
 export interface ContentService {
   listPages(): Promise<Page[]>;
+  getPageBySlug(slug: string): Promise<Page | null>;
   createPage(input: PageInput): Promise<Page>;
   updatePage(id: string, input: Partial<PageInput>): Promise<Page>;
   removePage(id: string): Promise<void>;
@@ -20,6 +21,9 @@ export interface ContentService {
 class SupabaseContentService implements ContentService {
   listPages(): Promise<Page[]> {
     return contentRepository.listPages();
+  }
+  getPageBySlug(slug: string): Promise<Page | null> {
+    return contentRepository.getPageBySlug(slug);
   }
   createPage(input: PageInput): Promise<Page> {
     return contentRepository.createPage(input);

@@ -17,6 +17,12 @@ const shopLinks = [
   { label: 'Collections', href: ROUTES.collections },
 ];
 
+const legalLinks = [
+  { label: 'Privacy Policy', href: ROUTES.page('privacy-policy') },
+  { label: 'Terms of Service', href: ROUTES.page('terms-of-service') },
+  { label: 'Shipping & Returns', href: ROUTES.page('shipping-returns') },
+];
+
 const DEFAULT_TAGLINE = 'Rare by design. Different by nature.';
 
 export function Footer() {
@@ -75,10 +81,21 @@ export function Footer() {
       </div>
 
       <div className="border-t border-footer-foreground/20 px-6 py-6 lg:px-8">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col items-center justify-between gap-4 lg:flex-row">
           <p className="text-xs text-footer-foreground/60">
             © {new Date().getFullYear()} X-Rare. All rights reserved.
           </p>
+          <nav aria-label="Legal" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-xs text-footer-foreground/60 underline-offset-2 hover:text-footer-foreground hover:underline"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
           <CountrySelector />
         </div>
       </div>

@@ -182,7 +182,7 @@ export function AdminContent() {
               ) : null}
               <AdminTextarea
                 containerClassName="sm:col-span-2"
-                label="Body"
+                label="Body (start a line with '## ' for a section heading)"
                 rows={6}
                 value={form.body}
                 onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}

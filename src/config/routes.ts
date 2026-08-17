@@ -15,6 +15,7 @@ export const ROUTES = {
   about: '/about',
   contact: '/contact',
   faq: '/faq',
+  page: (slug: string) => `/pages/${slug}`,
 
   // Auth
   login: '/login',

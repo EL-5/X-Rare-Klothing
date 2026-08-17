@@ -7,6 +7,8 @@ export interface Page {
   title: string;
   body: string | null;
   status: ContentStatus;
+  seoTitle: string | null;
+  seoDescription: string | null;
 }
 
 export interface PageInput {
@@ -35,7 +37,15 @@ export interface BlogPostInput {
 }
 
 function mapPage(row: PageRow): Page {
-  return { id: row.id, slug: row.slug, title: row.title, body: row.body, status: row.status };
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    body: row.body,
+    status: row.status,
+    seoTitle: row.seo_title,
+    seoDescription: row.seo_description,
+  };
 }
 
 function mapBlogPost(row: BlogPostRow): BlogPost {
@@ -55,6 +65,15 @@ export const contentRepository = {
     const { data, error } = await supabase.from('pages').select('*').order('title');
     if (error) throw error;
     return (data ?? []).map(mapPage);
+  },
+
+  // RLS scopes this to published pages for anonymous/customer sessions — an
+  // unpublished or unknown slug resolves to no row (not an error), which the
+  // public PageDetail route treats as "not found".
+  async getPageBySlug(slug: string): Promise<Page | null> {
+    const { data, error } = await supabase.from('pages').select('*').eq('slug', slug).maybeSingle();
+    if (error) throw error;
+    return data ? mapPage(data) : null;
   },
 
   async createPage(input: PageInput): Promise<Page> {

@@ -25,6 +25,7 @@ const BrandDetail = lazy(() => import('@/pages/BrandDetail').then((m) => ({ defa
 const About = lazy(() => import('@/pages/About').then((m) => ({ default: m.About })));
 const FAQ = lazy(() => import('@/pages/FAQ').then((m) => ({ default: m.FAQ })));
 const Contact = lazy(() => import('@/pages/Contact').then((m) => ({ default: m.Contact })));
+const PageDetail = lazy(() => import('@/pages/PageDetail').then((m) => ({ default: m.PageDetail })));
 const ProductDetail = lazy(() => import('@/pages/ProductDetail').then((m) => ({ default: m.ProductDetail })));
 const SearchResults = lazy(() => import('@/pages/SearchResults').then((m) => ({ default: m.SearchResults })));
 const Checkout = lazy(() => import('@/pages/Checkout').then((m) => ({ default: m.Checkout })));
@@ -98,6 +99,7 @@ export default function App() {
               <Route path="checkout/cancel" element={<CheckoutCancel />} />
               <Route path="about" element={<About />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="pages/:slug" element={<PageDetail />} />
               <Route path="contact" element={<Contact />} />
 
               <Route element={<RequireGuest />}>
