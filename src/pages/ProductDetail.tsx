@@ -5,7 +5,6 @@ import { ProductInformation } from '@/components/product/ProductInformation';
 import { VariantSelector } from '@/components/product/VariantSelector';
 import { QuantitySelector } from '@/components/product/QuantitySelector';
 import { AddToCart } from '@/components/product/AddToCart';
-import { PickupInformation } from '@/components/product/PickupInformation';
 import { ProductDetailsSection } from '@/components/product/ProductDetailsSection';
 import { ShippingReturnsSection } from '@/components/product/ShippingReturnsSection';
 import { SizeGuideSection } from '@/components/product/SizeGuideSection';
@@ -159,8 +158,6 @@ export function ProductDetail() {
             <QuantitySelector quantity={quantity} onChange={setQuantity} max={activeInventory?.available} />
 
             <AddToCart product={product} variant={activeVariant} quantity={quantity} availableQuantity={activeInventory?.available} />
-
-            <PickupInformation />
 
             <div>
               <ProductDetailsSection description={product.description} />
