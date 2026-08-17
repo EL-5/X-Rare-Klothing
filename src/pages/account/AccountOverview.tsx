@@ -11,8 +11,14 @@ const CARDS = [
 ];
 
 export function AccountOverview() {
-  const { profile } = useAuth();
+  const { profile, isStaff } = useAuth();
   const prefersReducedMotion = useReducedMotion();
+
+  // Staff have no other way to find the admin area from the customer UI —
+  // the header/nav has no admin link anywhere — so surface it here.
+  const cards = isStaff
+    ? [{ to: ROUTES.admin, title: 'Admin Dashboard', description: 'Manage products, orders, and store settings.' }, ...CARDS]
+    : CARDS;
 
   return (
     <div>
@@ -22,7 +28,7 @@ export function AccountOverview() {
       <p className="mt-2 text-sm text-ink/60">{profile?.email}</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {CARDS.map((card, index) => (
+        {cards.map((card, index) => (
           <motion.div
             key={card.to}
             initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
