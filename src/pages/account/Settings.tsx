@@ -6,6 +6,7 @@ import { customerService } from '@/services/customerService';
 import { useToast } from '@/stores/ToastStore';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { AccountPageHeader } from '@/components/account/AccountPageHeader';
 import { ROUTES } from '@/config/routes';
 
 export function Settings() {
@@ -59,9 +60,7 @@ export function Settings() {
 
   return (
     <div className="flex flex-col gap-10">
-      <div>
-        <h1 className="text-xl font-semibold uppercase tracking-wide text-ink">Settings</h1>
-      </div>
+      <AccountPageHeader title="Settings" description="Password, email preferences, sign out." />
 
       <form onSubmit={handlePrefsSubmit} className="max-w-md">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-ink">Email preferences</h2>

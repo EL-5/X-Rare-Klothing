@@ -8,6 +8,7 @@ import { useToast } from '@/stores/ToastStore';
 import { ROUTES } from '@/config/routes';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Button } from '@/components/ui/Button';
+import { AccountPageHeader } from '@/components/account/AccountPageHeader';
 import { formatMoney } from '@/utils/money';
 import type { WishlistItemWithProduct } from '@/repositories/wishlistRepository';
 
@@ -55,7 +56,7 @@ export function Wishlist() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold uppercase tracking-wide text-ink">Wishlist</h1>
+      <AccountPageHeader title="Wishlist" description="Saved pieces for later." />
 
       {items === null ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-3">

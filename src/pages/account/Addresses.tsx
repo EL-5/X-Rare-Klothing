@@ -6,6 +6,7 @@ import { addressService } from '@/services/addressService';
 import { useToast } from '@/stores/ToastStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { AccountPageHeader } from '@/components/account/AccountPageHeader';
 import type { AddressInput } from '@/repositories/addressRepository';
 import type { Address } from '@/types/domain';
 
@@ -97,10 +98,10 @@ export function Addresses() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold uppercase tracking-wide text-ink">Addresses</h1>
+      <div className="flex items-start justify-between gap-4">
+        <AccountPageHeader title="Addresses" description="Manage shipping and billing addresses." />
         {editingId === null ? (
-          <Button size="sm" variant="outline" onClick={() => startEdit()}>
+          <Button size="sm" variant="outline" onClick={() => startEdit()} className="mt-1 shrink-0">
             Add address
           </Button>
         ) : null}

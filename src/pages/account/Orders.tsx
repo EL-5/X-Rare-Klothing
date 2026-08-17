@@ -6,6 +6,7 @@ import { orderService } from '@/services/orderService';
 import { formatMoney } from '@/utils/money';
 import { ROUTES } from '@/config/routes';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { AccountPageHeader } from '@/components/account/AccountPageHeader';
 import type { Order } from '@/types/domain';
 
 export function Orders() {
@@ -20,7 +21,7 @@ export function Orders() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold uppercase tracking-wide text-ink">Orders</h1>
+      <AccountPageHeader title="Orders" description="Track and review past purchases." />
 
       {orders === null ? (
         <div className="mt-6 flex flex-col gap-3">

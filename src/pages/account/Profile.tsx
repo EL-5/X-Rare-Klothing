@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/stores/AuthStore';
 import { customerService } from '@/services/customerService';
 import { useToast } from '@/stores/ToastStore';
+import { AccountPageHeader } from '@/components/account/AccountPageHeader';
 
 export function Profile() {
   const { profile, refreshProfile } = useAuth();
@@ -31,8 +32,8 @@ export function Profile() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold uppercase tracking-wide text-ink">Profile</h1>
-      <form onSubmit={handleSubmit} className="mt-6 flex max-w-md flex-col gap-4">
+      <AccountPageHeader title="Profile" description="Your personal details." />
+      <form onSubmit={handleSubmit} className="mt-8 flex max-w-md flex-col gap-4">
         <Input label="Email" value={profile?.email ?? ''} disabled />
         <Input label="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
         <Input label="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
