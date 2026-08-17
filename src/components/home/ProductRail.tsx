@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -22,6 +23,7 @@ export interface ProductRailProps {
  */
 export function ProductRail({ heading, viewAllHref, products, priority = false }: ProductRailProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const scrollByAmount = (direction: 1 | -1) => {
     const el = scrollerRef.current;
@@ -78,12 +80,15 @@ export function ProductRail({ heading, viewAllHref, products, priority = false }
               </div>
             ))
           : products.map((product, index) => (
-              <ProductCard
+              <motion.div
                 key={product.id}
-                product={product}
-                priority={priority && index < 2}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : (index % 8) * 0.05, ease: [0.4, 0, 0.2, 1] }}
                 className="w-[65%] shrink-0 snap-start sm:w-[42%] lg:w-[23%]"
-              />
+              >
+                <ProductCard product={product} priority={priority && index < 2} />
+              </motion.div>
             ))}
       </div>
     </section>

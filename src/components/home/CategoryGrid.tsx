@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { categoryService } from '@/services/categoryService';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CategoryCard } from './CategoryCard';
@@ -7,6 +8,7 @@ import type { Category } from '@/repositories/categoryRepository';
 /** Top-level categories (Men/Women/Accessories), pulled live from the database rather than hardcoded. */
 export function CategoryGrid() {
   const [categories, setCategories] = useState<Category[] | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     categoryService.list().then((all) => setCategories(all.filter((c) => c.parentId === null)));
@@ -20,8 +22,15 @@ export function CategoryGrid() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {categories === null
           ? Array.from({ length: 3 }).map((_, index) => <Skeleton key={index} className="aspect-[4/5] w-full" />)
-          : categories.map((category) => (
-              <CategoryCard key={category.id} name={category.name} slug={category.slug} image={category.image} description={category.description} />
+          : categories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: prefersReducedMotion ? 0 : index * 0.08, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <CategoryCard name={category.name} slug={category.slug} image={category.image} description={category.description} />
+              </motion.div>
             ))}
       </div>
     </section>
