@@ -52,7 +52,10 @@ export function AdminNotifications() {
     setIsProcessing(true);
     try {
       const count = await notificationService.processQueue();
-      show({ title: count > 0 ? `Processed ${count} notification${count === 1 ? '' : 's'}` : 'Nothing to process', variant: 'success' });
+      show({
+        title: count > 0 ? `Marked ${count} notification${count === 1 ? '' : 's'} as sent (simulated)` : 'Nothing to process',
+        variant: 'success',
+      });
       await load();
     } catch (err) {
       show({ title: 'Could not process queue', description: err instanceof Error ? err.message : undefined, variant: 'error' });
@@ -65,13 +68,19 @@ export function AdminNotifications() {
     <div>
       <AdminPageHeader
         title="Notifications"
-        description="Email notification queue — order lifecycle, refunds, and newsletter sign-ups."
+        description="Notification queue — order lifecycle, refunds, and newsletter sign-ups."
         actions={
           <AdminButton onClick={handleProcessQueue} isLoading={isProcessing}>
             <RefreshCw className="h-4 w-4" /> Process queue
           </AdminButton>
         }
       />
+
+      <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        No email provider is connected yet. "Process queue" renders each notification and marks it{' '}
+        <span className="font-medium">sent</span>, but nothing is actually delivered — customers do not receive these
+        until a real provider (Resend, Postmark, etc.) is wired up. See <span className="font-mono text-xs">docs/deployment.md</span>.
+      </div>
 
       <div className="mb-4 flex gap-3">
         <AdminSelect
