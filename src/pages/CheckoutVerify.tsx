@@ -86,7 +86,7 @@ export function CheckoutVerify() {
         <Loader2 className="h-10 w-10 text-ink/60" />
         <h1 className="mt-6 text-lg font-semibold uppercase tracking-wide text-ink">Still processing</h1>
         <p className="mt-2 text-sm text-ink/60">
-          Your payment is taking longer than expected to confirm. We'll email you as soon as it's done — no need to pay again.
+          Your payment is taking longer than expected to confirm. Check your account under Orders in a few minutes — no need to pay again.
         </p>
       </div>
     );

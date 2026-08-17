@@ -14,7 +14,7 @@ export interface NewsletterProps {
 /** Name + email signup — mirrors the reference footer's newsletter form (see docs/interaction-map.md). */
 export function Newsletter({
   heading = 'Join the list',
-  incentive = 'Get 10% off your next order.',
+  incentive = 'Drops, offers, and rare finds — straight to your inbox.',
 }: NewsletterProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ export function Newsletter({
     try {
       await newsletterRepository.subscribe(email, name.trim() || undefined);
       void analyticsService.trackNewsletterSignup();
-      show({ title: 'You’re on the list', description: 'Check your inbox for your discount code.', variant: 'success' });
+      show({ title: 'You’re on the list', variant: 'success' });
       setName('');
       setEmail('');
     } catch (err) {

@@ -37,8 +37,6 @@ export function CheckoutSuccess() {
         <p className="mt-1 text-sm text-ink/70">Total charged: {formatMoney({ cents: state.totalCents, currency: state.currency })}</p>
       ) : null}
 
-      {state?.email ? <p className="mt-1 text-sm text-ink/60">A confirmation has been sent to {state.email}.</p> : null}
-
       <div className="mt-8 flex gap-3">
         <Link to={ROUTES.shop} className={buttonClassNames({ variant: 'outline' })}>
           Continue Shopping
