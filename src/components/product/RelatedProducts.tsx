@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ProductCard } from './ProductCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { productService } from '@/services/productService';
@@ -11,6 +12,7 @@ export interface RelatedProductsProps {
 /** "You might also be interested in" — loaded from the product service, never hardcoded (see docs/component-inventory.md). */
 export function RelatedProducts({ product }: RelatedProductsProps) {
   const [related, setRelated] = useState<Product[] | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     let cancelled = false;
@@ -36,7 +38,16 @@ export function RelatedProducts({ product }: RelatedProductsProps) {
                 <Skeleton className="mt-3 h-4 w-3/4" />
               </div>
             ))
-          : related.map((item) => <ProductCard key={item.id} product={item} />)}
+          : related.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : index * 0.06, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <ProductCard product={item} />
+              </motion.div>
+            ))}
       </div>
     </section>
   );

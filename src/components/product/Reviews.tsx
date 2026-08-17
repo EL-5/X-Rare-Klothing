@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Star, BadgeCheck } from 'lucide-react';
 import { reviewService } from '@/services/reviewService';
 import { WriteReviewForm } from '@/components/product/WriteReviewForm';
@@ -23,6 +24,7 @@ function StarRow({ rating }: { rating: number }) {
 export function Reviews({ productId }: ReviewsProps) {
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [average, setAverage] = useState<number | null>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   const load = useCallback(async () => {
     const [list, avg] = await Promise.all([reviewService.listForProduct(productId), reviewService.getAverageRating(productId)]);
@@ -56,8 +58,14 @@ export function Reviews({ productId }: ReviewsProps) {
           <p className="text-sm text-ink/60">No reviews yet for this product.</p>
         ) : (
           <ul className="flex flex-col gap-6">
-            {reviews.map((review) => (
-              <li key={review.id} className="border-b border-border pb-6 last:border-0">
+            {reviews.map((review, index) => (
+              <motion.li
+                key={review.id}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: prefersReducedMotion ? 0 : Math.min(index, 10) * 0.05 }}
+                className="border-b border-border pb-6 last:border-0"
+              >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <StarRow rating={review.rating} />
                   <div className="flex items-center gap-3">
@@ -87,7 +95,7 @@ export function Reviews({ productId }: ReviewsProps) {
                     ))}
                   </div>
                 ) : null}
-              </li>
+              </motion.li>
             ))}
           </ul>
         )}
