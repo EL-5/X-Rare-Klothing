@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Search as SearchIcon } from 'lucide-react';
 import { Drawer } from '@/components/ui/Drawer';
 import { Input } from '@/components/ui/Input';
@@ -26,6 +27,7 @@ export function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
   const [activeIndex, setActiveIndex] = useState(-1);
   const resultRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const { recent, record } = useRecentSearches();
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -138,7 +140,14 @@ export function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
               </p>
               <ul id="search-results-list" role="listbox" className="flex flex-col gap-4">
                 {result.products.map((product, index) => (
-                  <li key={product.id} role="option" aria-selected={activeIndex === index}>
+                  <motion.li
+                    key={product.id}
+                    role="option"
+                    aria-selected={activeIndex === index}
+                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, delay: prefersReducedMotion ? 0 : index * 0.04 }}
+                  >
                     <Link
                       ref={(el) => {
                         resultRefs.current[index] = el;
@@ -152,13 +161,17 @@ export function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
                         activeIndex === index ? 'bg-surface-muted' : null,
                       )}
                     >
-                      <div className="h-16 w-12 shrink-0 bg-surface-muted" />
+                      <div className="h-16 w-12 shrink-0 overflow-hidden bg-surface-muted">
+                        {product.images[0] ? (
+                          <img src={product.images[0]} alt="" loading="lazy" className="h-full w-full object-cover" />
+                        ) : null}
+                      </div>
                       <div>
                         <p className="text-sm font-medium text-ink">{product.title}</p>
                         <p className="text-xs text-ink/60">{formatMoney(product.price)}</p>
                       </div>
                     </Link>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
               {result.total > result.products.length ? (
